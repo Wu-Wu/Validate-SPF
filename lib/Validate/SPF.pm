@@ -213,7 +213,7 @@ IPv4 addresses can be passed as
     ip4:<IPv4-address>
     ip4:<IPv4-network>/<prefix-length>
 
-If no I<prefix-length> given, B</32> is assumed.
+If no I<prefix-length> given, the B</32> is assumed.
 
 =cut
 
@@ -254,6 +254,13 @@ sub _validate_ip4 {
 
 Additional checks for IP6 mechanism.
 
+IPv6 addresses can be passed as
+
+    ip6:<IPv6-address>
+    ip6:<IPv6-network>/<prefix-length>
+
+If no I<prefix-length> given, the B</128> is assumed.
+
 =cut
 
 sub _validate_ip6 {
@@ -265,6 +272,9 @@ sub _validate_ip6 {
 =head2 _validate_ptr
 
 Additional checks for PTR mechanism.
+
+    ptr
+    ptr:<domain>
 
 =cut
 
@@ -278,6 +288,8 @@ sub _validate_ptr {
 
 Additional checks for EXISTS mechanism.
 
+    exists:<domain>
+
 =cut
 
 sub _validate_exists {
@@ -289,6 +301,8 @@ sub _validate_exists {
 =head2 _validate_include
 
 Additional checks for INCLUDE mechanism.
+
+    include:<domain>
 
 =cut
 
@@ -302,6 +316,8 @@ sub _validate_include {
 
 Additional checks for REDIRECT modifier.
 
+    redirect=<domain>
+
 =cut
 
 sub _validate_redirect {
@@ -313,6 +329,8 @@ sub _validate_redirect {
 =head2 _validate_exp
 
 Additional checks for EXP modifier.
+
+    exp=<domain>
 
 =cut
 

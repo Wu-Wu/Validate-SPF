@@ -72,31 +72,49 @@ IPv4 addresses can be passed as
     ip4:<IPv4-address>
     ip4:<IPv4-network>/<prefix-length>
 
-If no _prefix-length_ given, **/32** is assumed.
+If no _prefix-length_ given, the **/32** is assumed.
 
 ## \_validate\_ip6
 
 Additional checks for IP6 mechanism.
 
+IPv6 addresses can be passed as
+
+    ip6:<IPv6-address>
+    ip6:<IPv6-network>/<prefix-length>
+
+If no _prefix-length_ given, the **/128** is assumed.
+
 ## \_validate\_ptr
 
 Additional checks for PTR mechanism.
+
+    ptr
+    ptr:<domain>
 
 ## \_validate\_exists
 
 Additional checks for EXISTS mechanism.
 
+    exists:<domain>
+
 ## \_validate\_include
 
 Additional checks for INCLUDE mechanism.
+
+    include:<domain>
 
 ## \_validate\_redirect
 
 Additional checks for REDIRECT modifier.
 
+    redirect=<domain>
+
 ## \_validate\_exp
 
 Additional checks for EXP modifier.
+
+    exp=<domain>
 
 # SEE ALSO
 
