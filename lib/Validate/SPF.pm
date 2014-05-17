@@ -166,6 +166,15 @@ sub check_extra {
 
 Additional checks for A mechanism.
 
+The A records can be passed as
+
+    a
+    a/<prefix-length>
+    a:<domain-name>
+    a:<domain-name>/<prefix-length>
+
+If no I<domain-name> given, the B<current domain> is used.
+
 =cut
 
 sub _validate_a {
@@ -178,6 +187,15 @@ sub _validate_a {
 
 Additional checks for MX mechanism.
 
+The MX records can be passed as
+
+    mx
+    mx/<prefix-length>
+    mx:<domain-name>
+    mx:<domain-name>/<prefix-length>
+
+If no I<domain-name> given, the B<current domain> is used.
+
 =cut
 
 sub _validate_mx {
@@ -189,6 +207,13 @@ sub _validate_mx {
 =head2 _validate_ip4
 
 Additional checks for IP4 mechanism.
+
+IPv4 addresses can be passed as
+
+    ip4:<IPv4-address>
+    ip4:<IPv4-network>/<prefix-length>
+
+If no I<prefix-length> given, B</32> is assumed.
 
 =cut
 

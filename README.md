@@ -4,7 +4,7 @@ Validate::SPF - Validates SPF text string
 
 # VERSION
 
-version 0.001
+version 0.002
 
 # SYNOPSIS
 
@@ -41,13 +41,38 @@ Checks extra parameters for mechanisms and modifiers.
 
 Additional checks for A mechanism.
 
+The A records can be passed as
+
+    a
+    a/<prefix-length>
+    a:<domain-name>
+    a:<domain-name>/<prefix-length>
+
+If no _domain-name_ given, the **current domain** is used.
+
 ## \_validate\_mx
 
 Additional checks for MX mechanism.
 
+The MX records can be passed as
+
+    mx
+    mx/<prefix-length>
+    mx:<domain-name>
+    mx:<domain-name>/<prefix-length>
+
+If no _domain-name_ given, the **current domain** is used.
+
 ## \_validate\_ip4
 
 Additional checks for IP4 mechanism.
+
+IPv4 addresses can be passed as
+
+    ip4:<IPv4-address>
+    ip4:<IPv4-network>/<prefix-length>
+
+If no _prefix-length_ given, **/32** is assumed.
 
 ## \_validate\_ip6
 
