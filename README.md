@@ -6,11 +6,30 @@ Validate::SPF - Validates SPF text string
 
 version 0.001
 
+# SYNOPSIS
+
+    use Validate::SPF qw( validate );
+
+    my $spf_text = 'v=spf1 +a/24 mx mx:mailer.example.com ip4:192.168.0.1/16 -all';
+
+    print $spf_text . "\n";
+    print ( validate( $spf_text ) ? 'valid' : 'NOT valid' ) . "\n";
+
+# DESCRIPTION
+
+This module implements basic SPF validation.
+
+**This is ALPHA quality software. The API may change without notification!**
+
+# EXPORTS
+
+TODO
+
 # FUNCTIONS
 
 ## validate
 
-parse and validate SPF string
+Parse and validate SPF string..
 
 ## check\_extra
 
@@ -53,6 +72,12 @@ Additional checks for REDIRECT modifier.
 ## \_validate\_exp
 
 Additional checks for EXP modifier.
+
+# SEE ALSO
+
+[RFC 7208](http://tools.ietf.org/html/rfc7208)
+
+Sender Policy Framework (SPF) for Authorizing Use of Domains in Email, Version 1.
 
 # AUTHOR
 

@@ -16,11 +16,30 @@ our @EXPORT_OK = (qw(
 
 our $TOKENS;
 
+=head1 SYNOPSIS
+
+    use Validate::SPF qw( validate );
+
+    my $spf_text = 'v=spf1 +a/24 mx mx:mailer.example.com ip4:192.168.0.1/16 -all';
+
+    print $spf_text . "\n";
+    print ( validate( $spf_text ) ? 'valid' : 'NOT valid' ) . "\n";
+
+=head1 DESCRIPTION
+
+This module implements basic SPF validation.
+
+B<This is ALPHA quality software. The API may change without notification!>
+
+=head1 EXPORTS
+
+TODO
+
 =head1 FUNCTIONS
 
 =head2 validate
 
-parse and validate SPF string
+Parse and validate SPF string..
 
 =cut
 
@@ -277,5 +296,13 @@ sub _validate_exp {
 
     return 1;
 }
+
+=head1 SEE ALSO
+
+L<RFC 7208|http://tools.ietf.org/html/rfc7208>
+
+Sender Policy Framework (SPF) for Authorizing Use of Domains in Email, Version 1.
+
+=cut
 
 1;
