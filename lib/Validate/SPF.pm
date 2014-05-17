@@ -147,7 +147,7 @@ Additional checks for A mechanism.
 sub _validate_a {
     my ( $extra, $options ) = @_;
 
-    return 0;
+    return 1;
 }
 
 =head2 _validate_mx
@@ -159,7 +159,7 @@ Additional checks for MX mechanism.
 sub _validate_mx {
     my ( $extra, $options ) = @_;
 
-    return 0;
+    return 1;
 }
 
 =head2 _validate_ip4
@@ -171,7 +171,7 @@ Additional checks for IP4 mechanism.
 sub _validate_ip4 {
     my ( $extra, $options ) = @_;
 
-    return 0;
+    return 1;
 }
 
 =head2 _validate_ip6
@@ -183,7 +183,7 @@ Additional checks for IP6 mechanism.
 sub _validate_ip6 {
     my ( $extra, $options ) = @_;
 
-    return 0;
+    return 1;
 }
 
 =head2 _validate_ptr
@@ -195,7 +195,7 @@ Additional checks for PTR mechanism.
 sub _validate_ptr {
     my ( $extra, $options ) = @_;
 
-    return 0;
+    return 1;
 }
 
 =head2 _validate_exists
@@ -207,7 +207,7 @@ Additional checks for EXISTS mechanism.
 sub _validate_exists {
     my ( $extra, $options ) = @_;
 
-    return 0;
+    return 1;
 }
 
 =head2 _validate_include
@@ -219,7 +219,7 @@ Additional checks for INCLUDE mechanism.
 sub _validate_include {
     my ( $extra, $options ) = @_;
 
-    return 0;
+    return 1;
 }
 
 =head2 _validate_redirect
@@ -231,7 +231,7 @@ Additional checks for REDIRECT modifier.
 sub _validate_redirect {
     my ( $extra, $options ) = @_;
 
-    return 0;
+    return 1;
 }
 
 =head2 _validate_exp
@@ -243,7 +243,7 @@ Additional checks for EXP modifier.
 sub _validate_exp {
     my ( $extra, $options ) = @_;
 
-    return 0;
+    return 1;
 }
 
 1;
