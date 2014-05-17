@@ -1,17 +1,27 @@
 package Validate::SPF;
 
+# ABSTRACT: Validates SPF text string
+
 use strict;
 use warnings;
 use Exporter 'import';
 
-our $VERSION = '0.001';
+# VERSION
+# AUTHORITY
 
 our @EXPORT = ();
 our @EXPORT_OK = (qw(
     validate
 ));
 
-# parse and validate SPF string
+=head1 FUNCTIONS
+
+=head2 validate
+
+parse and validate SPF string
+
+=cut
+
 sub validate {
     my ( $text ) = @_;
 
@@ -100,6 +110,12 @@ sub validate {
     return wantarray ? ( $is_valid, $error ) : $is_valid;
 }
 
+=head2 check_extra
+
+Checks extra parameters for mechanisms and modifiers.
+
+=cut
+
 sub check_extra {
     my ( $token, $extra ) = @_;
 
@@ -120,11 +136,25 @@ sub check_extra {
     return $validators{ $token }->( $extra );
 }
 
+=head1 PRIVATE FUNCTIONS
+
+=head2 _validate_a
+
+Additional checks for A mechanism.
+
+=cut
+
 sub _validate_a {
     my ( $extra, $options ) = @_;
 
     return 0;
 }
+
+=head2 _validate_mx
+
+Additional checks for MX mechanism.
+
+=cut
 
 sub _validate_mx {
     my ( $extra, $options ) = @_;
@@ -132,11 +162,23 @@ sub _validate_mx {
     return 0;
 }
 
+=head2 _validate_ip4
+
+Additional checks for IP4 mechanism.
+
+=cut
+
 sub _validate_ip4 {
     my ( $extra, $options ) = @_;
 
     return 0;
 }
+
+=head2 _validate_ip6
+
+Additional checks for IP6 mechanism.
+
+=cut
 
 sub _validate_ip6 {
     my ( $extra, $options ) = @_;
@@ -144,11 +186,23 @@ sub _validate_ip6 {
     return 0;
 }
 
+=head2 _validate_ptr
+
+Additional checks for PTR mechanism.
+
+=cut
+
 sub _validate_ptr {
     my ( $extra, $options ) = @_;
 
     return 0;
 }
+
+=head2 _validate_exists
+
+Additional checks for EXISTS mechanism.
+
+=cut
 
 sub _validate_exists {
     my ( $extra, $options ) = @_;
@@ -156,17 +210,35 @@ sub _validate_exists {
     return 0;
 }
 
+=head2 _validate_include
+
+Additional checks for INCLUDE mechanism.
+
+=cut
+
 sub _validate_include {
     my ( $extra, $options ) = @_;
 
     return 0;
 }
 
+=head2 _validate_redirect
+
+Additional checks for REDIRECT modifier.
+
+=cut
+
 sub _validate_redirect {
     my ( $extra, $options ) = @_;
 
     return 0;
 }
+
+=head2 _validate_exp
+
+Additional checks for EXP modifier.
+
+=cut
 
 sub _validate_exp {
     my ( $extra, $options ) = @_;
