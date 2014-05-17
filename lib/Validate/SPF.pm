@@ -33,7 +33,11 @@ B<This is ALPHA quality software. The API may change without notification!>
 
 =head1 EXPORTS
 
-TODO
+Module does not export any symbols by default. At request available the following symbols:
+
+=head2 validate
+
+See L</validate>.
 
 =head1 FUNCTIONS
 
@@ -136,7 +140,8 @@ sub validate {
 
 =head2 check_extra
 
-Checks extra parameters for mechanisms and modifiers.
+Checks extra parameters of the tokens (mechanisms, modifiers). Uses the appropriate private function
+to validate it. Returns the result of calling this function, or 0 if no function found.
 
 =cut
 

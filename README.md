@@ -23,7 +23,11 @@ This module implements basic SPF validation.
 
 # EXPORTS
 
-TODO
+Module does not export any symbols by default. At request available the following symbols:
+
+## validate
+
+See ["validate"](#validate).
 
 # FUNCTIONS
 
@@ -33,7 +37,8 @@ Parse and validate SPF string..
 
 ## check\_extra
 
-Checks extra parameters for mechanisms and modifiers.
+Checks extra parameters of the tokens (mechanisms, modifiers). Uses the appropriate private function
+to validate it. Returns the result of calling this function, or 0 if no function found.
 
 # PRIVATE FUNCTIONS
 
