@@ -14,6 +14,8 @@ our @EXPORT_OK = (qw(
     validate
 ));
 
+our $TOKENS;
+
 =head1 FUNCTIONS
 
 =head2 validate
@@ -36,6 +38,7 @@ sub validate {
     }
 
     my $tokens = [];
+    $TOKENS = $tokens;
 
     for my $el ( @elements ) {
         my ( $token, $qualifier, $mechanism, $modifier, $extra );
@@ -94,6 +97,8 @@ sub validate {
 
         push @$tokens, $token;
     }
+
+    $TOKENS = $tokens;
 
     my @invalid;
 
@@ -169,9 +174,36 @@ Additional checks for IP4 mechanism.
 =cut
 
 sub _validate_ip4 {
-    my ( $extra, $options ) = @_;
+    my ( $ip, $options ) = @_;
 
-    return 1;
+    # TODO: support for 10.0/16, 127/8, ...
+
+    my ( $ipaddr_valid, $prefix_valid ) = ( 0, 1 );
+
+    if ( $ip =~ /^((?:[0-9]{1,3}\.){3}[0-9]{1,3})(.*)$/ ) {
+        my ( $ipaddr, $prefix ) = ( $1, ( $2 || undef ) );
+
+        if ( $ipaddr ) {
+            my @octets =
+                grep { $_ >= 0 && $_ <= 255 }   # [0 .. 255]
+                map { $_ + 0 }                  # 192.168.001.002
+                split /\./ => $ipaddr;
+
+            $ipaddr_valid = @octets == 4 ? 1 : 0;
+        }
+
+        if ( $prefix && $prefix =~ m|^/(.*)| ) {
+            $prefix = $1;
+
+            $prefix_valid =
+                $prefix > -1 && $prefix < 33    # [/0 .. /32]
+                    ? 1 : 0;
+        }
+
+        return $ipaddr_valid && $prefix_valid;
+    }
+
+    return 0;
 }
 
 =head2 _validate_ip6
