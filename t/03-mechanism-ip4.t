@@ -32,7 +32,6 @@ describe "Validate::SPF" => sub {
                 0, '?ip4:100.2.300.1',
             'v=spf1 ip4:127.0.0.1  -ip4:1.2.3.290  ?ip4:1.2.3.290' =>
                 0, '-ip4:1.2.3.290',
-            # TODO
             'v=spf1 +ip4:1.2/16' =>
                 0, '+ip4:1.2/16',
             # invalid bitmask

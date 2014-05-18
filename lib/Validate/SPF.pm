@@ -225,8 +225,6 @@ If no I<prefix-length> given, the B</32> is assumed.
 sub _validate_ip4 {
     my ( $ip, $options ) = @_;
 
-    # TODO: support for 10.0/16, 127/8, ...
-
     my ( $ipaddr_valid, $prefix_valid ) = ( 0, 1 );
 
     if ( $ip =~ /^((?:[0-9]{1,3}\.){3}[0-9]{1,3})(.*)$/ ) {
