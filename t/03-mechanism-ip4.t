@@ -17,8 +17,6 @@ describe "Validate::SPF" => sub {
                 1, undef,
             'v=spf1 +ip4:1.2.3.4  ?ip4:192.168.1.0/24  ' =>
                 1, undef,
-            'v=spf1 ip4:192.157.005.0/24' =>
-                1, undef,
             'v=spf1 ip4:10.90.90.90' =>
                 1, undef,
             'v=spf1 ?ip4:10.90.90.91' =>
@@ -34,6 +32,8 @@ describe "Validate::SPF" => sub {
                 0, '-ip4:1.2.3.290',
             'v=spf1 +ip4:1.2/16' =>
                 0, '+ip4:1.2/16',
+            'v=spf1 ip4:192.157.005.0/24' =>
+                0, 'ip4:192.157.005.0/24',
             # invalid bitmask
             'v=spf1  -ip4:1.2.3.0/34' =>
                 0, '-ip4:1.2.3.0/34',

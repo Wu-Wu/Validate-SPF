@@ -232,8 +232,7 @@ sub _validate_ip4 {
 
         if ( $ipaddr ) {
             my @octets =
-                grep { $_ >= 0 && $_ <= 255 }   # [0 .. 255]
-                map { $_ + 0 }                  # 192.168.001.002
+                grep { length( $_ + 0 ) == length( $_ ) && $_ >= 0 && $_ <= 255 }   # [0 .. 255]
                 split /\./ => $ipaddr;
 
             $ipaddr_valid = @octets == 4 ? 1 : 0;
