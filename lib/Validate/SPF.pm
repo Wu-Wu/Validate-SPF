@@ -10,9 +10,9 @@ use Exporter 'import';
 # AUTHORITY
 
 our @EXPORT = ();
-our @EXPORT_OK = (qw(
+our @EXPORT_OK = qw(
     validate
-));
+);
 
 our $TOKENS;
 
