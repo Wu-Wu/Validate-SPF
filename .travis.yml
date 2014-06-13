@@ -21,6 +21,6 @@ install:
 script:
     - "dzil smoke --release --author"
 
-# after_success:
-#     - "cpanm --mirror http://cpan.stratopan.com -q -n Dist::Zilla::App::Command::cover Devel::Cover::Report::Coveralls"
-#     - "dzil cover -report coveralls"
+after_success:
+    - "cpanm --mirror http://cpan.stratopan.com -q -n Dist::Zilla::App::Command::cover Devel::Cover::Report::Coveralls"
+    - "dzil cover -report coveralls"
