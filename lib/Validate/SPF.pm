@@ -33,15 +33,9 @@ B<This is ALPHA quality software. The API may change without notification!>
 
 =head1 EXPORTS
 
-Module does not export any symbols by default. At request available the following symbols:
+Module does not export any symbols by default.
 
-=head2 validate
-
-See L</validate>.
-
-=head1 FUNCTIONS
-
-=head2 validate
+=func validate
 
 Parse and validate SPF string..
 

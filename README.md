@@ -21,19 +21,15 @@ This module implements basic SPF validation.
 
 **This is ALPHA quality software. The API may change without notification!**
 
-# EXPORTS
-
-Module does not export any symbols by default. At request available the following symbols:
-
-## validate
-
-See ["validate"](#validate).
-
 # FUNCTIONS
 
 ## validate
 
 Parse and validate SPF string..
+
+# EXPORTS
+
+Module does not export any symbols by default.
 
 ## check\_extra
 
