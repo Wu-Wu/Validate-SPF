@@ -709,9 +709,6 @@ sub
     bless $self, $class;
 }
 
-#line 68 "Parser.yp"
-
-
 =method parse
 
 Builds an abstract syntax tree (AST) for given text representation of SPF.
@@ -719,16 +716,6 @@ Builds an abstract syntax tree (AST) for given text representation of SPF.
     my $ast = $parser->parse( 'v=spf1 ~all' );
 
 Returns an C<undef> if error occured. See L</error> for details.
-
-=cut
-
-sub parse {
-    my ( $self, $text ) = @_;
-
-    $input = $self->YYData->{INPUT} = $text;
-
-    return $self->YYParse( yylex => \&_lexer, yyerror => \&_error );
-}
 
 =method error
 
@@ -746,14 +733,25 @@ Here is an example
 
 =cut
 
+=for Pod::Coverage _error _lexer
+
+=cut
+
+#line 68 "Parser.yp"
+
+
+sub parse {
+    my ( $self, $text ) = @_;
+
+    $input = $self->YYData->{INPUT} = $text;
+
+    return $self->YYParse( yylex => \&_lexer, yyerror => \&_error );
+}
+
 sub error {
     my ( $self ) = @_;
     return $self->{_error};
 }
-
-=for Pod::Coverage _error
-
-=cut
 
 sub _error {
     my ( $self ) = @_;
@@ -772,10 +770,6 @@ sub _error {
         context => $input,
     };
 }
-
-=for Pod::Coverage _lexer
-
-=cut
 
 sub _lexer {
     my ( $parser ) = @_;

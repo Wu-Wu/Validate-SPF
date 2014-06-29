@@ -66,5 +66,33 @@ sub new {
     bless $self, $class;
 }
 
+=method parse
+
+Builds an abstract syntax tree (AST) for given text representation of SPF.
+
+    my $ast = $parser->parse( 'v=spf1 ~all' );
+
+Returns an C<undef> if error occured. See L</error> for details.
+
+=method error
+
+Returns last error occured as HashRef.
+
+    $parser->error;
+
+Here is an example
+
+    {
+       code    => 'E_SYNTAX',
+       text    => 'Syntax error',
+       context => 'v=spf1 <*>exclude:foo.example.com  mx ~all',
+    }
+
+=cut
+
+=for Pod::Coverage _error _lexer
+
+=cut
+
 <<$tail>>
 1;

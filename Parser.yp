@@ -67,16 +67,6 @@ ptr
 
 %%
 
-=method parse
-
-Builds an abstract syntax tree (AST) for given text representation of SPF.
-
-    my $ast = $parser->parse( 'v=spf1 ~all' );
-
-Returns an C<undef> if error occured. See L</error> for details.
-
-=cut
-
 sub parse {
     my ( $self, $text ) = @_;
 
@@ -85,30 +75,10 @@ sub parse {
     return $self->YYParse( yylex => \&_lexer, yyerror => \&_error );
 }
 
-=method error
-
-Returns last error occured as HashRef.
-
-    $parser->error;
-
-Here is an example
-
-    {
-       code    => 'E_SYNTAX',
-       text    => 'Syntax error',
-       context => 'v=spf1 <*>exclude:foo.example.com  mx ~all',
-    }
-
-=cut
-
 sub error {
     my ( $self ) = @_;
     return $self->{_error};
 }
-
-=for Pod::Coverage _error
-
-=cut
 
 sub _error {
     my ( $self ) = @_;
@@ -127,10 +97,6 @@ sub _error {
         context => $input,
     };
 }
-
-=for Pod::Coverage _lexer
-
-=cut
 
 sub _lexer {
     my ( $parser ) = @_;
