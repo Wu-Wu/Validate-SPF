@@ -1,0 +1,168 @@
+%{#
+# Validate::SPF::Parser source file
+#
+# Author: Anton Gerasimov
+#
+# Use: yapp -s -m Validate::SPF::Parser -o lib/Validate/SPF/Parser.pm -t Parser.pm.skel Parser.yp
+#
+# to generate the Parser module.
+#
+
+my ( $input );
+%}
+
+%%
+
+spf
+    : chunks
+        { $_[1] }
+    ;
+
+version
+    : VERSION
+        {
+            $_[1] eq 'v=spf1' and
+                return +{ type => 'ver', version => $_[1] };
+
+            $_[0]->YYData->{ERRMSG} = {
+                text    => 'Invalid SPF version',
+                code    => 'E_INVALID_VERSION',
+                context => $_[1],
+            };
+            $_[0]->YYError;
+            undef;
+        }
+    ;
+
+chunks
+    : chunks chunk
+        { push(@{$_[1]}, $_[2]) if defined $_[2]; $_[1] }
+    | chunk
+        { defined $_[1] ? [ $_[1] ] : [ ] }
+    ;
+
+chunk
+    : version
+    | mechanism
+    ;
+
+mechanism
+    : all
+    | ptr
+    ;
+
+all
+    : ALL
+        { +{ type => 'mech', qualifer => '+', mechanism => $_[1] } }
+    | QUALIFER ALL
+        { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2] } }
+    ;
+
+ptr
+    : PTR
+        { +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => '@' } }
+    | QUALIFER PTR
+        { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => '@' } }
+    ;
+
+%%
+
+=method parse
+
+Builds an abstract syntax tree (AST) for given text representation of SPF.
+
+    my $ast = $parser->parse( 'v=spf1 ~all' );
+
+Returns an C<undef> if error occured. See L</error> for details.
+
+=cut
+
+sub parse {
+    my ( $self, $text ) = @_;
+
+    $input = $self->YYData->{INPUT} = $text;
+
+    return $self->YYParse( yylex => \&_lexer, yyerror => \&_error );
+}
+
+=method error
+
+Returns last error occured as HashRef.
+
+    $parser->error;
+
+Here is an example
+
+    {
+       code    => 'E_SYNTAX',
+       text    => 'Syntax error',
+       context => 'v=spf1 <*>exclude:foo.example.com  mx ~all',
+    }
+
+=cut
+
+sub error {
+    my ( $self ) = @_;
+    return $self->{_error};
+}
+
+=for Pod::Coverage _error
+
+=cut
+
+sub _error {
+    my ( $self ) = @_;
+
+    exists $self->YYData->{ERRMSG} && do {
+        $self->{_error} = $self->YYData->{ERRMSG};
+        delete $self->YYData->{ERRMSG};
+        return;
+    };
+
+    substr( $input, index( $input, $self->YYCurval ), 0, '<*>' );
+
+    $self->{_error} = {
+        text    => 'Syntax error',
+        code    => 'E_SYNTAX',
+        context => $input,
+    };
+}
+
+=for Pod::Coverage _lexer
+
+=cut
+
+sub _lexer {
+    my ( $parser ) = @_;
+
+    $parser->YYData->{INPUT} =~ s/^\s*//;
+
+    for ( $parser->YYData->{INPUT} ) {
+        # printf( "[debug] %s\n", $_ );
+
+        s/^(v\=spf\d)\b//i          and return ( 'VERSION', $1 );
+
+        s/^(\/)\b//i                and return ( 'SLASH', '/' );
+        s/^(\:)\b//i                and return ( 'COLON', ':' );
+        s/^(\=)\b//i                and return ( 'ASSIGN', '=' );
+
+        # qualifers
+        s/^([-~\+\?])\b//i          and return ( 'QUALIFER', $1 );
+
+        # mechanisms
+        s/^(all)\b//i               and return ( 'ALL', $1 );
+        s/^(ptr)\b//i               and return ( 'PTR', $1 );
+        s/^(a)\b//i                 and return ( 'PTR', $1 );
+        s/^(mx)\b//i                and return ( 'UNKNOWN', $1 );
+        s/^(ip4)\b//i               and return ( 'UNKNOWN', $1 );
+        s/^(ip6)\b//i               and return ( 'UNKNOWN', $1 );
+        s/^(exists)\b//i            and return ( 'UNKNOWN', $1 );
+        s/^(include)\b//i           and return ( 'UNKNOWN', $1 );
+
+        # garbage
+        s/^(.+)\b//i                and return ( 'UNKNOWN', $1 );
+    }
+
+    # EOF
+    return ( '', undef );
+}

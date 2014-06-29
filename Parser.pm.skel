@@ -1,0 +1,70 @@
+package <<$package>>;
+
+# ABSTRACT: SPF v1 parser implementation
+
+####################################################################
+#
+#    This file was generated using Parse::Yapp version <<$version>>.
+#
+#        Don't edit this file, use source file instead.
+#
+#             ANY CHANGE MADE HERE WILL BE LOST !
+#
+####################################################################
+
+use strict;
+use warnings;
+
+# VERSION
+# AUTHORITY
+
+use vars qw ( @ISA );
+
+@ISA = qw( Parse::Yapp::Driver );
+
+<<$driver>>
+
+<<$head>>
+
+=head1 SYNOPSIS
+
+    use <<$package>>;
+
+    $parser = <<$package>>->new;
+    $ast = $parser->parse( 'v=spf1 a include:_spf.example.com ~all' );
+
+    unless ( $ast ) {
+        # fail
+        print "Error: " . $parser->error->{code} . ": " . $parser->error->{text} . "\n";
+    }
+    else {
+        # ok
+        ...
+    }
+
+=method new
+
+Creates an instance of SPF parser.
+
+    my $parser = <<$package>>->new;
+
+=cut
+
+sub new {
+    my( $class ) = shift;
+
+    ref( $class ) and $class = ref( $class );
+
+    my $self =
+        $class->SUPER::new(
+            yyversion   => '<<$version>>',
+            yystates    => <<$states>>,
+            yyrules     => <<$rules>>,
+            @_
+        );
+
+    bless $self, $class;
+}
+
+<<$tail>>
+1;
