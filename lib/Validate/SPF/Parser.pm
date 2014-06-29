@@ -753,6 +753,7 @@ sub parse {
     my ( $self, $text ) = @_;
 
     $input = $self->YYData->{INPUT} = $text;
+    $self->{_error} = {};
 
     return $self->YYParse( yylex => \&_lexer, yyerror => \&_error );
 }
