@@ -88,9 +88,22 @@ Here is an example
        context => 'v=spf1 <*>exclude:foo.example.com  mx ~all',
     }
 
-=cut
-
 =for Pod::Coverage _error _lexer
+
+=head1 BUILD PARSER
+
+In cases of C<Parser.yp> was modified you should re-build this module. Ensure you have L<Parse::Yapp>
+distribution installed.
+
+In root directory:
+
+    $ yapp -s -m Validate::SPF::Parser -o lib/Validate/SPF/Parser.pm -t Parser.pm.skel Parser.yp
+
+Ensure the C<lib/Validate/SPF/Parser.pm> saved without tab symbols and has unix line endings.
+
+=head1 SEE ALSO
+
+L<Parse::Yapp>
 
 =cut
 

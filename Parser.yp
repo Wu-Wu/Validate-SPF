@@ -3,10 +3,6 @@
 #
 # Author: Anton Gerasimov
 #
-# Use: yapp -s -m Validate::SPF::Parser -o lib/Validate/SPF/Parser.pm -t Parser.pm.skel Parser.yp
-#
-# to generate the Parser module.
-#
 
 my ( $input );
 %}

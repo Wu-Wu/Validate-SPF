@@ -505,10 +505,6 @@ sub _Parse {
 #
 # Author: Anton Gerasimov
 #
-# Use: yapp -s -m Validate::SPF::Parser -o lib/Validate/SPF/Parser.pm -t Parser.pm.skel Parser.yp
-#
-# to generate the Parser module.
-#
 
 my ( $input );
 
@@ -634,13 +630,13 @@ sub new {
     [#Rule 1
          'spf', 1,
 sub
-#line 18 "Parser.yp"
+#line 14 "Parser.yp"
 { $_[1] }
     ],
     [#Rule 2
          'version', 1,
 sub
-#line 23 "Parser.yp"
+#line 19 "Parser.yp"
 {
             $_[1] eq 'v=spf1' and
                 return +{ type => 'ver', version => $_[1] };
@@ -657,13 +653,13 @@ sub
     [#Rule 3
          'chunks', 2,
 sub
-#line 39 "Parser.yp"
+#line 35 "Parser.yp"
 { push(@{$_[1]}, $_[2]) if defined $_[2]; $_[1] }
     ],
     [#Rule 4
          'chunks', 1,
 sub
-#line 41 "Parser.yp"
+#line 37 "Parser.yp"
 { defined $_[1] ? [ $_[1] ] : [ ] }
     ],
     [#Rule 5
@@ -681,25 +677,25 @@ sub
     [#Rule 9
          'all', 1,
 sub
-#line 56 "Parser.yp"
+#line 52 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => $_[1] } }
     ],
     [#Rule 10
          'all', 2,
 sub
-#line 58 "Parser.yp"
+#line 54 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2] } }
     ],
     [#Rule 11
          'ptr', 1,
 sub
-#line 63 "Parser.yp"
+#line 59 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => '@' } }
     ],
     [#Rule 12
          'ptr', 2,
 sub
-#line 65 "Parser.yp"
+#line 61 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => '@' } }
     ]
 ],
@@ -731,13 +727,26 @@ Here is an example
        context => 'v=spf1 <*>exclude:foo.example.com  mx ~all',
     }
 
-=cut
-
 =for Pod::Coverage _error _lexer
 
+=head1 BUILD PARSER
+
+In cases of C<Parser.yp> was modified you should re-build this module. Ensure you have L<Parse::Yapp>
+distribution installed.
+
+In root directory:
+
+    $ yapp -s -m Validate::SPF::Parser -o lib/Validate/SPF/Parser.pm -t Parser.pm.skel Parser.yp
+
+Ensure the C<lib/Validate/SPF/Parser.pm> saved without tab symbols and has unix line endings.
+
+=head1 SEE ALSO
+
+L<Parse::Yapp>
+
 =cut
 
-#line 68 "Parser.yp"
+#line 64 "Parser.yp"
 
 
 sub parse {
