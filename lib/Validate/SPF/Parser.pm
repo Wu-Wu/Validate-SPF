@@ -506,7 +506,14 @@ sub _Parse {
 # Author: Anton Gerasimov
 #
 
-my ( $input );
+my $input;
+
+my %errors = (
+    E_DEFAULT           => "Just error",
+    E_SYNTAX            => "Syntax error near token '%s'",
+    E_INVALID_VERSION   => "Invalid SPF version",
+);
+
 
 
 =head1 SYNOPSIS
@@ -630,36 +637,30 @@ sub new {
     [#Rule 1
          'spf', 1,
 sub
-#line 14 "Parser.yp"
+#line 21 "Parser.yp"
 { $_[1] }
     ],
     [#Rule 2
          'version', 1,
 sub
-#line 19 "Parser.yp"
+#line 26 "Parser.yp"
 {
             $_[1] eq 'v=spf1' and
                 return +{ type => 'ver', version => $_[1] };
 
-            $_[0]->YYData->{ERRMSG} = {
-                text    => 'Invalid SPF version',
-                code    => 'E_INVALID_VERSION',
-                context => $_[1],
-            };
-            $_[0]->YYError;
-            undef;
+            $_[0]->raise_error( 'E_INVALID_VERSION', $_[1] );
         }
     ],
     [#Rule 3
          'chunks', 2,
 sub
-#line 35 "Parser.yp"
-{ push(@{$_[1]}, $_[2]) if defined $_[2]; $_[1] }
+#line 36 "Parser.yp"
+{ push( @{$_[1]}, $_[2] ) if defined $_[2]; $_[1] }
     ],
     [#Rule 4
          'chunks', 1,
 sub
-#line 37 "Parser.yp"
+#line 38 "Parser.yp"
 { defined $_[1] ? [ $_[1] ] : [ ] }
     ],
     [#Rule 5
@@ -677,25 +678,25 @@ sub
     [#Rule 9
          'all', 1,
 sub
-#line 52 "Parser.yp"
+#line 53 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => $_[1] } }
     ],
     [#Rule 10
          'all', 2,
 sub
-#line 54 "Parser.yp"
+#line 55 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2] } }
     ],
     [#Rule 11
          'ptr', 1,
 sub
-#line 59 "Parser.yp"
+#line 60 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => '@' } }
     ],
     [#Rule 12
          'ptr', 2,
 sub
-#line 61 "Parser.yp"
+#line 62 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => '@' } }
     ]
 ],
@@ -713,6 +714,31 @@ Builds an abstract syntax tree (AST) for given text representation of SPF.
 
 Returns an C<undef> if error occured. See L</error> for details.
 
+=method raise_error
+
+Raises a parser error.
+
+    $parser->raise_error( $error_code, $context, @extra );
+    $parser->raise_error( 'E_FOO', 'context line', qw( bar baz ) );
+
+Arguments are:
+
+=over 4
+
+=item B<$error_code>
+
+Error code. If code does not exist in error table it will be replaced with L</E_DEFAULT>.
+
+=item B<$context>
+
+Context line.
+
+=item B<@extra>
+
+Extra parameters for error text.
+
+=back
+
 =method error
 
 Returns last error occured as HashRef.
@@ -722,12 +748,46 @@ Returns last error occured as HashRef.
 Here is an example
 
     {
-       code    => 'E_SYNTAX',
-       text    => 'Syntax error',
-       context => 'v=spf1 <*>exclude:foo.example.com  mx ~all',
+       code    => "E_DEFAULT",
+       text    => "Just error",
+       context => "",
     }
 
-=for Pod::Coverage _error _lexer
+=for Pod::Coverage _error _lexer _build_error
+
+=head1 ERROR HANDLING
+
+The following errors might be returned.
+
+=head2 E_SYNTAX
+
+Syntax error. The marker pointed to errored token in context line. E.g.:
+
+    {
+        code    => "E_SYNTAX",
+        context => "v=spf1 <*>exclude:foo.example.com  mx ~all",
+        text    => "Syntax error near token 'exclude'",
+    }
+
+=head2 E_INVALID_VERSION
+
+Returned in cases of version token does not equal C<spf1>.
+
+    {
+        code    => "E_INVALID_VERSION",
+        text    => "Invalid SPF version",
+        context => "v=spf2",
+    }
+
+=head2 E_DEFAULT
+
+Default (last resort) error.
+
+    {
+       code    => "E_DEFAULT",
+       text    => "Just error",
+       context => "",
+    }
 
 =head1 BUILD PARSER
 
@@ -746,39 +806,52 @@ L<Parse::Yapp>
 
 =cut
 
-#line 64 "Parser.yp"
+#line 65 "Parser.yp"
 
 
 sub parse {
     my ( $self, $text ) = @_;
 
     $input = $self->YYData->{INPUT} = $text;
-    $self->{_error} = {};
+    delete $self->YYData->{ERRMSG};
 
     return $self->YYParse( yylex => \&_lexer, yyerror => \&_error );
 }
 
 sub error {
     my ( $self ) = @_;
-    return $self->{_error};
+    return $self->YYData->{ERRMSG};
+}
+
+sub _build_error {
+    my ( $self, $code, $context, @extra ) = @_;
+
+    $code = 'E_DEFAULT'     unless exists $errors{$code};
+
+    $self->YYData->{ERRMSG} = {
+        text    => sprintf( $errors{$code} => @extra ),
+        code    => $code,
+        context => $context,
+    };
+}
+
+sub raise_error {
+    my ( $self, @params ) = @_;
+
+    $self->_build_error( @params );
+    $self->YYError;
 }
 
 sub _error {
     my ( $self ) = @_;
 
-    exists $self->YYData->{ERRMSG} && do {
-        $self->{_error} = $self->YYData->{ERRMSG};
-        delete $self->YYData->{ERRMSG};
-        return;
-    };
+    unless ( exists $self->YYData->{ERRMSG} ) {
+        substr( $input, index( $input, $self->YYCurval ), 0, '<*>' );
 
-    substr( $input, index( $input, $self->YYCurval ), 0, '<*>' );
+        $self->_build_error( 'E_SYNTAX', $input, $self->YYCurval );
+    }
 
-    $self->{_error} = {
-        text    => 'Syntax error',
-        code    => 'E_SYNTAX',
-        context => $input,
-    };
+    return;
 }
 
 sub _lexer {

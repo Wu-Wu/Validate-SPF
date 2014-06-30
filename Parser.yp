@@ -4,7 +4,14 @@
 # Author: Anton Gerasimov
 #
 
-my ( $input );
+my $input;
+
+my %errors = (
+    E_DEFAULT           => "Just error",
+    E_SYNTAX            => "Syntax error near token '%s'",
+    E_INVALID_VERSION   => "Invalid SPF version",
+);
+
 %}
 
 %%
@@ -20,19 +27,13 @@ version
             $_[1] eq 'v=spf1' and
                 return +{ type => 'ver', version => $_[1] };
 
-            $_[0]->YYData->{ERRMSG} = {
-                text    => 'Invalid SPF version',
-                code    => 'E_INVALID_VERSION',
-                context => $_[1],
-            };
-            $_[0]->YYError;
-            undef;
+            $_[0]->raise_error( 'E_INVALID_VERSION', $_[1] );
         }
     ;
 
 chunks
     : chunks chunk
-        { push(@{$_[1]}, $_[2]) if defined $_[2]; $_[1] }
+        { push( @{$_[1]}, $_[2] ) if defined $_[2]; $_[1] }
     | chunk
         { defined $_[1] ? [ $_[1] ] : [ ] }
     ;
@@ -67,32 +68,45 @@ sub parse {
     my ( $self, $text ) = @_;
 
     $input = $self->YYData->{INPUT} = $text;
-    $self->{_error} = {};
+    delete $self->YYData->{ERRMSG};
 
     return $self->YYParse( yylex => \&_lexer, yyerror => \&_error );
 }
 
 sub error {
     my ( $self ) = @_;
-    return $self->{_error};
+    return $self->YYData->{ERRMSG};
+}
+
+sub _build_error {
+    my ( $self, $code, $context, @extra ) = @_;
+
+    $code = 'E_DEFAULT'     unless exists $errors{$code};
+
+    $self->YYData->{ERRMSG} = {
+        text    => sprintf( $errors{$code} => @extra ),
+        code    => $code,
+        context => $context,
+    };
+}
+
+sub raise_error {
+    my ( $self, @params ) = @_;
+
+    $self->_build_error( @params );
+    $self->YYError;
 }
 
 sub _error {
     my ( $self ) = @_;
 
-    exists $self->YYData->{ERRMSG} && do {
-        $self->{_error} = $self->YYData->{ERRMSG};
-        delete $self->YYData->{ERRMSG};
-        return;
-    };
+    unless ( exists $self->YYData->{ERRMSG} ) {
+        substr( $input, index( $input, $self->YYCurval ), 0, '<*>' );
 
-    substr( $input, index( $input, $self->YYCurval ), 0, '<*>' );
+        $self->_build_error( 'E_SYNTAX', $input, $self->YYCurval );
+    }
 
-    $self->{_error} = {
-        text    => 'Syntax error',
-        code    => 'E_SYNTAX',
-        context => $input,
-    };
+    return;
 }
 
 sub _lexer {

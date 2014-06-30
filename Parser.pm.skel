@@ -74,6 +74,31 @@ Builds an abstract syntax tree (AST) for given text representation of SPF.
 
 Returns an C<undef> if error occured. See L</error> for details.
 
+=method raise_error
+
+Raises a parser error.
+
+    $parser->raise_error( $error_code, $context, @extra );
+    $parser->raise_error( 'E_FOO', 'context line', qw( bar baz ) );
+
+Arguments are:
+
+=over 4
+
+=item B<$error_code>
+
+Error code. If code does not exist in error table it will be replaced with L</E_DEFAULT>.
+
+=item B<$context>
+
+Context line.
+
+=item B<@extra>
+
+Extra parameters for error text.
+
+=back
+
 =method error
 
 Returns last error occured as HashRef.
@@ -83,12 +108,46 @@ Returns last error occured as HashRef.
 Here is an example
 
     {
-       code    => 'E_SYNTAX',
-       text    => 'Syntax error',
-       context => 'v=spf1 <*>exclude:foo.example.com  mx ~all',
+       code    => "E_DEFAULT",
+       text    => "Just error",
+       context => "",
     }
 
-=for Pod::Coverage _error _lexer
+=for Pod::Coverage _error _lexer _build_error
+
+=head1 ERROR HANDLING
+
+The following errors might be returned.
+
+=head2 E_SYNTAX
+
+Syntax error. The marker pointed to errored token in context line. E.g.:
+
+    {
+        code    => "E_SYNTAX",
+        context => "v=spf1 <*>exclude:foo.example.com  mx ~all",
+        text    => "Syntax error near token 'exclude'",
+    }
+
+=head2 E_INVALID_VERSION
+
+Returned in cases of version token does not equal C<spf1>.
+
+    {
+        code    => "E_INVALID_VERSION",
+        text    => "Invalid SPF version",
+        context => "v=spf2",
+    }
+
+=head2 E_DEFAULT
+
+Default (last resort) error.
+
+    {
+       code    => "E_DEFAULT",
+       text    => "Just error",
+       context => "",
+    }
 
 =head1 BUILD PARSER
 
