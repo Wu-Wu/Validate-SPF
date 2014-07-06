@@ -551,83 +551,190 @@ sub new {
             yystates    => [
     {#State 0
         ACTIONS => {
-            'PTR' => 6,
+            'MECHANISM' => 2,
             'ALL' => 3,
-            'QUALIFER' => 8,
-            'VERSION' => 10
+            'QUALIFER' => 11,
+            'VERSION' => 13
         },
         GOTOS => {
             'mechanism' => 1,
-            'chunks' => 7,
-            'ptr' => 2,
-            'version' => 4,
-            'chunk' => 11,
-            'spf' => 9,
-            'all' => 5
+            'bare' => 4,
+            'version' => 7,
+            'with_bitmask' => 6,
+            'with_domain' => 5,
+            'with_domain_bitmask' => 8,
+            'chunks' => 9,
+            'with_ipaddress' => 10,
+            'chunk' => 14,
+            'spf' => 12
         }
     },
     {#State 1
         DEFAULT => -6
     },
     {#State 2
-        DEFAULT => -8
+        ACTIONS => {
+            ":" => 15,
+            "/" => 16
+        },
+        DEFAULT => -14
     },
     {#State 3
-        DEFAULT => -9
+        DEFAULT => -12
     },
     {#State 4
-        DEFAULT => -5
-    },
-    {#State 5
-        DEFAULT => -7
-    },
-    {#State 6
         DEFAULT => -11
     },
+    {#State 5
+        DEFAULT => -10
+    },
+    {#State 6
+        DEFAULT => -9
+    },
     {#State 7
+        DEFAULT => -5
+    },
+    {#State 8
+        DEFAULT => -8
+    },
+    {#State 9
         ACTIONS => {
-            'PTR' => 6,
+            'MECHANISM' => 2,
             'ALL' => 3,
-            'QUALIFER' => 8,
-            'VERSION' => 10
+            'QUALIFER' => 11,
+            'VERSION' => 13
         },
         DEFAULT => -1,
         GOTOS => {
             'mechanism' => 1,
-            'ptr' => 2,
-            'version' => 4,
-            'chunk' => 12,
-            'all' => 5
-        }
-    },
-    {#State 8
-        ACTIONS => {
-            'PTR' => 14,
-            'ALL' => 13
-        }
-    },
-    {#State 9
-        ACTIONS => {
-            '' => 15
+            'bare' => 4,
+            'version' => 7,
+            'with_bitmask' => 6,
+            'with_domain' => 5,
+            'with_domain_bitmask' => 8,
+            'with_ipaddress' => 10,
+            'chunk' => 17
         }
     },
     {#State 10
-        DEFAULT => -2
+        DEFAULT => -7
     },
     {#State 11
-        DEFAULT => -4
+        ACTIONS => {
+            'MECHANISM' => 18,
+            'ALL' => 19
+        }
     },
     {#State 12
-        DEFAULT => -3
+        ACTIONS => {
+            '' => 20
+        }
     },
     {#State 13
-        DEFAULT => -10
+        DEFAULT => -2
     },
     {#State 14
-        DEFAULT => -12
+        DEFAULT => -4
     },
     {#State 15
+        ACTIONS => {
+            'DOMAIN' => 21,
+            'IPADDRESS' => 22
+        }
+    },
+    {#State 16
+        ACTIONS => {
+            'BITMASK' => 23
+        }
+    },
+    {#State 17
+        DEFAULT => -3
+    },
+    {#State 18
+        ACTIONS => {
+            ":" => 24,
+            "/" => 25
+        },
+        DEFAULT => -15
+    },
+    {#State 19
+        DEFAULT => -13
+    },
+    {#State 20
         DEFAULT => 0
+    },
+    {#State 21
+        ACTIONS => {
+            "/" => 26
+        },
+        DEFAULT => -16
+    },
+    {#State 22
+        ACTIONS => {
+            "/" => 27
+        },
+        DEFAULT => -22
+    },
+    {#State 23
+        DEFAULT => -18
+    },
+    {#State 24
+        ACTIONS => {
+            'DOMAIN' => 28,
+            'IPADDRESS' => 29
+        }
+    },
+    {#State 25
+        ACTIONS => {
+            'BITMASK' => 30
+        }
+    },
+    {#State 26
+        ACTIONS => {
+            'BITMASK' => 31
+        }
+    },
+    {#State 27
+        ACTIONS => {
+            'BITMASK' => 32
+        }
+    },
+    {#State 28
+        ACTIONS => {
+            "/" => 33
+        },
+        DEFAULT => -17
+    },
+    {#State 29
+        ACTIONS => {
+            "/" => 34
+        },
+        DEFAULT => -23
+    },
+    {#State 30
+        DEFAULT => -19
+    },
+    {#State 31
+        DEFAULT => -20
+    },
+    {#State 32
+        DEFAULT => -24
+    },
+    {#State 33
+        ACTIONS => {
+            'BITMASK' => 35
+        }
+    },
+    {#State 34
+        ACTIONS => {
+            'BITMASK' => 36
+        }
+    },
+    {#State 35
+        DEFAULT => -21
+    },
+    {#State 36
+        DEFAULT => -25
     }
 ],
             yyrules     => [
@@ -676,28 +783,97 @@ sub
          'mechanism', 1, undef
     ],
     [#Rule 9
-         'all', 1,
-sub
-#line 53 "Parser.yp"
-{ +{ type => 'mech', qualifer => '+', mechanism => $_[1] } }
+         'mechanism', 1, undef
     ],
     [#Rule 10
-         'all', 2,
-sub
-#line 55 "Parser.yp"
-{ +{ type => 'mech', qualifer => $_[1], mechanism => $_[2] } }
+         'mechanism', 1, undef
     ],
     [#Rule 11
-         'ptr', 1,
-sub
-#line 60 "Parser.yp"
-{ +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => '@' } }
+         'mechanism', 1, undef
     ],
     [#Rule 12
-         'ptr', 2,
+         'bare', 1,
 sub
-#line 62 "Parser.yp"
+#line 57 "Parser.yp"
+{ +{ type => 'mech', qualifer => '+', mechanism => $_[1] } }
+    ],
+    [#Rule 13
+         'bare', 2,
+sub
+#line 59 "Parser.yp"
+{ +{ type => 'mech', qualifer => $_[1], mechanism => $_[2] } }
+    ],
+    [#Rule 14
+         'with_domain', 1,
+sub
+#line 65 "Parser.yp"
+{ +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => '@' } }
+    ],
+    [#Rule 15
+         'with_domain', 2,
+sub
+#line 67 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => '@' } }
+    ],
+    [#Rule 16
+         'with_domain', 3,
+sub
+#line 69 "Parser.yp"
+{ +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => $_[3] } }
+    ],
+    [#Rule 17
+         'with_domain', 4,
+sub
+#line 71 "Parser.yp"
+{ +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => $_[4] } }
+    ],
+    [#Rule 18
+         'with_bitmask', 3,
+sub
+#line 77 "Parser.yp"
+{ +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => '@', bitmask => $_[3] } }
+    ],
+    [#Rule 19
+         'with_bitmask', 4,
+sub
+#line 79 "Parser.yp"
+{ +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => '@', bitmask => $_[4] } }
+    ],
+    [#Rule 20
+         'with_domain_bitmask', 5,
+sub
+#line 85 "Parser.yp"
+{ +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => $_[3], bitmask => $_[5] } }
+    ],
+    [#Rule 21
+         'with_domain_bitmask', 6,
+sub
+#line 87 "Parser.yp"
+{ +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => $_[4], bitmask => $_[6] } }
+    ],
+    [#Rule 22
+         'with_ipaddress', 3,
+sub
+#line 93 "Parser.yp"
+{ +{ type => 'mech', qualifer => '+', mechanism => $_[1], ipaddress => $_[3] } }
+    ],
+    [#Rule 23
+         'with_ipaddress', 4,
+sub
+#line 95 "Parser.yp"
+{ +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], ipaddress => $_[4] } }
+    ],
+    [#Rule 24
+         'with_ipaddress', 5,
+sub
+#line 97 "Parser.yp"
+{ +{ type => 'mech', qualifer => '+', mechanism => $_[1], network => $_[3], bitmask => $_[5] } }
+    ],
+    [#Rule 25
+         'with_ipaddress', 6,
+sub
+#line 99 "Parser.yp"
+{ +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], network => $_[4], bitmask => $_[6] } }
     ]
 ],
             @_
@@ -806,7 +982,7 @@ L<Parse::Yapp>
 
 =cut
 
-#line 65 "Parser.yp"
+#line 102 "Parser.yp"
 
 
 sub parse {
@@ -862,27 +1038,36 @@ sub _lexer {
     for ( $parser->YYData->{INPUT} ) {
         # printf( "[debug] %s\n", $_ );
 
-        s/^(v\=spf\d)\b//i          and return ( 'VERSION', $1 );
+        s/^(v\=spf\d)\b//i
+            and return ( 'VERSION', $1 );
 
-        s/^(\/)\b//i                and return ( 'SLASH', '/' );
-        s/^(\:)\b//i                and return ( 'COLON', ':' );
-        s/^(\=)\b//i                and return ( 'ASSIGN', '=' );
+        s/^(\/)\b//i
+            and return ( '/', '/' );
+        s/^(\:)\b//i
+            and return ( ':', ':' );
+        s/^(\=)\b//i
+            and return ( '=', '=' );
 
         # qualifers
-        s/^([-~\+\?])\b//i          and return ( 'QUALIFER', $1 );
+        s/^([-~\+\?])\b//i
+            and return ( 'QUALIFER', $1 );
 
         # mechanisms
-        s/^(all)\b//i               and return ( 'ALL', $1 );
-        s/^(ptr)\b//i               and return ( 'PTR', $1 );
-        s/^(a)\b//i                 and return ( 'PTR', $1 );
-        s/^(mx)\b//i                and return ( 'UNKNOWN', $1 );
-        s/^(ip4)\b//i               and return ( 'UNKNOWN', $1 );
-        s/^(ip6)\b//i               and return ( 'UNKNOWN', $1 );
-        s/^(exists)\b//i            and return ( 'UNKNOWN', $1 );
-        s/^(include)\b//i           and return ( 'UNKNOWN', $1 );
+        s/^(all|ptr|a|mx|ip4|ip6|exists|include)\b//i
+            and return ( 'MECHANISM', $1 );
+
+        s/^((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|(([a-f\d]{1,4}:){7,7}[a-f\d]{1,4}|([a-f\d]{1,4}:){1,7}:|([a-f\d]{1,4}:){1,6}:[a-f\d]{1,4}|([a-f\d]{1,4}:){1,5}(:[a-f\d]{1,4}){1,2}|([a-f\d]{1,4}:){1,4}(:[a-f\d]{1,4}){1,3}|([a-f\d]{1,4}:){1,3}(:[a-f\d]{1,4}){1,4}|([a-f\d]{1,4}:){1,2}(:[a-f\d]{1,4}){1,5}|[a-f\d]{1,4}:((:[a-f\d]{1,4}){1,6})|:((:[a-f\d]{1,4}){1,7}|:)|fe80:(:[a-f\d]{0,4}){0,4}%[a-z\d]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[\d]){0,1}[\d])|([a-f\d]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[\d]){0,1}[\d]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[\d]){0,1}[\d])))\b//i
+            and return ( 'IPADDRESS', $1 );
+
+        s/^([_\.a-z\d][\-a-z\d]*\.[\.\-a-z\d]*[a-z\d]?)\b//i
+            and return ( 'DOMAIN', $1 );
+
+        s/^(\d{1,3})\b//i
+            and return ( 'BITMASK', $1 );
 
         # garbage
-        s/^(.+)\b//i                and return ( 'UNKNOWN', $1 );
+        s/^(.+)\b//i
+            and return ( 'UNKNOWN', $1 );
     }
 
     # EOF
