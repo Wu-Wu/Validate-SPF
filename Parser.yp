@@ -9,9 +9,11 @@ use Regexp::Common qw( net );
 my $input;
 
 my %errors = (
-    E_DEFAULT           => "Just error",
-    E_SYNTAX            => "Syntax error near token '%s'",
-    E_INVALID_VERSION   => "Invalid SPF version",
+    E_DEFAULT               => "Just error",
+    E_SYNTAX                => "Syntax error near token '%s'",
+    E_INVALID_VERSION       => "Invalid SPF version",
+    E_IPADDR_EXPECTED       => "Expected ip or network address",
+    E_DOMAIN_EXPECTED       => "Expected domain name"
 );
 
 %}
@@ -61,11 +63,29 @@ modifier
 # ptr, exists, include, mx, a, all
 with_domain
     : MECHANISM
-        { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1],
-            ( $_[1] =~ /all/i ? () : ( domain => '@' ) ) } }
+        {
+            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] )    if $_[1] =~ /ip[46]/i;
+            $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[1] )    if $_[1] =~ /exists|include/i;
+
+            +{
+                type => 'mech',
+                qualifer => '+',
+                mechanism => lc $_[1],
+                ( $_[1] =~ /all/i ? () : ( domain => '@' ) )
+            };
+        }
     | QUALIFER MECHANISM
-        { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2],
-            ( $_[2] =~ /all/i ? () : ( domain => '@' ) ) } }
+        {
+            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[2] )    if $_[2] =~ /ip[46]/i;
+            $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[2] )    if $_[2] =~ /exists|include/i;
+
+            +{
+                type => 'mech',
+                qualifer => $_[1],
+                mechanism => lc $_[2],
+                ( $_[2] =~ /all/i ? () : ( domain => '@' ) )
+            };
+        }
     | MECHANISM ':' DOMAIN
         { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], domain => $_[3] } }
     | QUALIFER MECHANISM ':' DOMAIN

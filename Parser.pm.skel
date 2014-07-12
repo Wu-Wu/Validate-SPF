@@ -139,6 +139,26 @@ Returned in cases of version token does not equal C<spf1>.
         context => "v=spf2",
     }
 
+=head2 E_IPADDR_EXPECTED
+
+Returned in cases of C<ip4> or C<ip6> token has been used without ip or network address.
+
+    {
+        code    => "E_IPADDR_EXPECTED",
+        text    => "Expected ip or network address",
+        context => "ip4",
+    }
+
+=head2 E_DOMAIN_EXPECTED
+
+Returned in cases of C<exists> or C<include> token has been used without domain name.
+
+    {
+        code    => "E_DOMAIN_EXPECTED",
+        text    => "Expected domain name",
+        context => "exists",
+    }
+
 =head2 E_DEFAULT
 
 Default (last resort) error.

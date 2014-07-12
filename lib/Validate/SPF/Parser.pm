@@ -511,9 +511,11 @@ use Regexp::Common qw( net );
 my $input;
 
 my %errors = (
-    E_DEFAULT           => "Just error",
-    E_SYNTAX            => "Syntax error near token '%s'",
-    E_INVALID_VERSION   => "Invalid SPF version",
+    E_DEFAULT               => "Just error",
+    E_SYNTAX                => "Syntax error near token '%s'",
+    E_INVALID_VERSION       => "Invalid SPF version",
+    E_IPADDR_EXPECTED       => "Expected ip or network address",
+    E_DOMAIN_EXPECTED       => "Expected domain name"
 );
 
 
@@ -752,13 +754,13 @@ sub new {
     [#Rule 1
          'spf', 1,
 sub
-#line 23 "Parser.yp"
+#line 25 "Parser.yp"
 { $_[1] }
     ],
     [#Rule 2
          'version', 1,
 sub
-#line 28 "Parser.yp"
+#line 30 "Parser.yp"
 {
             $_[1] eq 'v=spf1' and
                 return +{ type => 'ver', version => $_[1] };
@@ -769,13 +771,13 @@ sub
     [#Rule 3
          'chunks', 2,
 sub
-#line 38 "Parser.yp"
+#line 40 "Parser.yp"
 { push( @{$_[1]}, $_[2] ) if defined $_[2]; $_[1] }
     ],
     [#Rule 4
          'chunks', 1,
 sub
-#line 40 "Parser.yp"
+#line 42 "Parser.yp"
 { defined $_[1] ? [ $_[1] ] : [ ] }
     ],
     [#Rule 5
@@ -802,81 +804,99 @@ sub
     [#Rule 12
          'modifier', 3,
 sub
-#line 58 "Parser.yp"
+#line 60 "Parser.yp"
 { +{ type => 'mod', modifier => lc $_[1], domain => $_[3] } }
     ],
     [#Rule 13
          'with_domain', 1,
 sub
-#line 64 "Parser.yp"
-{ +{ type => 'mech', qualifer => '+', mechanism => lc $_[1],
-            ( $_[1] =~ /all/i ? () : ( domain => '@' ) ) } }
+#line 66 "Parser.yp"
+{
+            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] )    if $_[1] =~ /ip[46]/i;
+            $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[1] )    if $_[1] =~ /exists|include/i;
+
+            +{
+                type => 'mech',
+                qualifer => '+',
+                mechanism => lc $_[1],
+                ( $_[1] =~ /all/i ? () : ( domain => '@' ) )
+            };
+        }
     ],
     [#Rule 14
          'with_domain', 2,
 sub
-#line 67 "Parser.yp"
-{ +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2],
-            ( $_[2] =~ /all/i ? () : ( domain => '@' ) ) } }
+#line 78 "Parser.yp"
+{
+            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[2] )    if $_[2] =~ /ip[46]/i;
+            $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[2] )    if $_[2] =~ /exists|include/i;
+
+            +{
+                type => 'mech',
+                qualifer => $_[1],
+                mechanism => lc $_[2],
+                ( $_[2] =~ /all/i ? () : ( domain => '@' ) )
+            };
+        }
     ],
     [#Rule 15
          'with_domain', 3,
 sub
-#line 70 "Parser.yp"
+#line 90 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], domain => $_[3] } }
     ],
     [#Rule 16
          'with_domain', 4,
 sub
-#line 72 "Parser.yp"
+#line 92 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], domain => $_[4] } }
     ],
     [#Rule 17
          'with_bitmask', 3,
 sub
-#line 78 "Parser.yp"
+#line 98 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], domain => '@', bitmask => $_[3] } }
     ],
     [#Rule 18
          'with_bitmask', 4,
 sub
-#line 80 "Parser.yp"
+#line 100 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], domain => '@', bitmask => $_[4] } }
     ],
     [#Rule 19
          'with_domain_bitmask', 5,
 sub
-#line 86 "Parser.yp"
+#line 106 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], domain => $_[3], bitmask => $_[5] } }
     ],
     [#Rule 20
          'with_domain_bitmask', 6,
 sub
-#line 88 "Parser.yp"
+#line 108 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], domain => $_[4], bitmask => $_[6] } }
     ],
     [#Rule 21
          'with_ipaddress', 3,
 sub
-#line 94 "Parser.yp"
+#line 114 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], ipaddress => $_[3] } }
     ],
     [#Rule 22
          'with_ipaddress', 4,
 sub
-#line 96 "Parser.yp"
+#line 116 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], ipaddress => $_[4] } }
     ],
     [#Rule 23
          'with_ipaddress', 5,
 sub
-#line 98 "Parser.yp"
+#line 118 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], network => $_[3], bitmask => $_[5] } }
     ],
     [#Rule 24
          'with_ipaddress', 6,
 sub
-#line 100 "Parser.yp"
+#line 120 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], network => $_[4], bitmask => $_[6] } }
     ]
 ],
@@ -959,6 +979,26 @@ Returned in cases of version token does not equal C<spf1>.
         context => "v=spf2",
     }
 
+=head2 E_IPADDR_EXPECTED
+
+Returned in cases of C<ip4> or C<ip6> token has been used without ip or network address.
+
+    {
+        code    => "E_IPADDR_EXPECTED",
+        text    => "Expected ip or network address",
+        context => "ip4",
+    }
+
+=head2 E_DOMAIN_EXPECTED
+
+Returned in cases of C<exists> or C<include> token has been used without domain name.
+
+    {
+        code    => "E_DOMAIN_EXPECTED",
+        text    => "Expected domain name",
+        context => "exists",
+    }
+
 =head2 E_DEFAULT
 
 Default (last resort) error.
@@ -986,7 +1026,7 @@ L<Parse::Yapp>
 
 =cut
 
-#line 103 "Parser.yp"
+#line 123 "Parser.yp"
 
 
 sub parse {
