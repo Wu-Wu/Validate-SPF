@@ -29,7 +29,7 @@ version
     : VERSION
         {
             $_[1] eq 'v=spf1' and
-                return +{ type => 'ver', version => $_[1] };
+                return $_[0]->_ver_generic( $_[1] );
 
             $_[0]->raise_error( 'E_INVALID_VERSION', $_[1] );
         }
@@ -57,7 +57,9 @@ mechanism
 
 modifier
     : MODIFIER '=' DOMAIN
-        { +{ type => 'mod', modifier => lc $_[1], domain => $_[3] } }
+        {
+            $_[0]->_mod_generic( $_[1], $_[3] );
+        }
     ;
 
 # ptr, exists, include, mx, a, all
@@ -69,12 +71,7 @@ with_domain
             $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[1] )
                 if $_[1] =~ /exists|include/i;
 
-            +{
-                type => 'mech',
-                qualifer => '+',
-                mechanism => lc $_[1],
-                ( $_[1] =~ /all/i ? () : ( domain => '@' ) )
-            };
+            $_[0]->_mech_domain( '+', $_[1], $_[1] =~ /all/i ? undef : '@' );
         }
     | QUALIFER MECHANISM
         {
@@ -83,17 +80,16 @@ with_domain
             $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[1] . $_[2] )
                 if $_[2] =~ /exists|include/i;
 
-            +{
-                type => 'mech',
-                qualifer => $_[1],
-                mechanism => lc $_[2],
-                ( $_[2] =~ /all/i ? () : ( domain => '@' ) )
-            };
+            $_[0]->_mech_domain( $_[1], $_[2], $_[2] =~ /all/i ? undef : '@' );
         }
     | MECHANISM ':' DOMAIN
-        { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], domain => $_[3] } }
+        {
+            $_[0]->_mech_domain( '+', $_[1], $_[3] );
+        }
     | QUALIFER MECHANISM ':' DOMAIN
-        { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], domain => $_[4] } }
+        {
+            $_[0]->_mech_domain( $_[1], $_[2], $_[4] );
+        }
     ;
 
 # mx, a
@@ -103,47 +99,47 @@ with_bitmask
             $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] . '/' . $_[3] )
                 if $_[1] =~ /ip[46]/i;
 
-            +{
-                type => 'mech',
-                qualifer => '+',
-                mechanism => lc $_[1],
-                domain => '@',
-                bitmask => $_[3]
-            };
+            $_[0]->_mech_domain_bitmask( '+', $_[1], '@', $_[3] );
         }
     | QUALIFER MECHANISM '/' BITMASK
         {
             $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] . $_[2] . '/' . $_[4] )
                 if $_[2] =~ /ip[46]/i;
 
-            +{
-                type => 'mech',
-                qualifer => $_[1],
-                mechanism => lc $_[2],
-                domain => '@',
-                bitmask => $_[4]
-            };
+            $_[0]->_mech_domain_bitmask( $_[1], $_[2], '@', $_[4] );
         }
     ;
 
 # mx, a
 with_domain_bitmask
     : MECHANISM ':' DOMAIN '/' BITMASK
-        { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], domain => $_[3], bitmask => $_[5] } }
+        {
+            $_[0]->_mech_domain_bitmask( '+', $_[1], $_[3], $_[5] );
+        }
     | QUALIFER MECHANISM ':' DOMAIN '/' BITMASK
-        { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], domain => $_[4], bitmask => $_[6] } }
+        {
+            $_[0]->_mech_domain_bitmask( $_[1], $_[2], $_[4], $_[6] );
+        }
     ;
 
 # ip4, ip6
 with_ipaddress
     : MECHANISM ':' IPADDRESS
-        { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], ipaddress => $_[3] } }
+        {
+            $_[0]->_mech_ipaddr_bitmask( '+', $_[1], $_[3], undef );
+        }
     | QUALIFER MECHANISM ':' IPADDRESS
-        { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], ipaddress => $_[4] } }
+        {
+            $_[0]->_mech_ipaddr_bitmask( $_[1], $_[2], $_[4], undef );
+        }
     | MECHANISM ':' IPADDRESS '/' BITMASK
-        { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], network => $_[3], bitmask => $_[5] } }
+        {
+            $_[0]->_mech_ipaddr_bitmask( '+', $_[1], $_[3], $_[5] );
+        }
     | QUALIFER MECHANISM ':' IPADDRESS '/' BITMASK
-        { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], network => $_[4], bitmask => $_[6] } }
+        {
+            $_[0]->_mech_ipaddr_bitmask( $_[1], $_[2], $_[4], $_[6] );
+        }
     ;
 
 %%
@@ -239,4 +235,74 @@ sub _lexer {
 
     # EOF
     return ( '', undef );
+}
+
+# generic modifier
+sub _mod_generic {
+    my ( $self, $mod, $domain ) = @_;
+
+    return +{
+        type => 'mod',
+        modifier => lc $mod,
+        (
+            $domain
+                ? ( domain => $domain ) :
+                ( )
+        ),
+    };
+}
+
+# generic version
+sub _ver_generic {
+    my ( $self, $ver ) = @_;
+
+    return +{
+        type => 'ver',
+        version => lc $ver,
+    };
+}
+
+
+# generic mechanism
+sub _mech_generic {
+    my ( $self, $qualifer, $mech, $domain, $ipaddr, $bitmask ) = @_;
+
+    return +{
+        type => 'mech',
+        qualifer => $qualifer,
+        mechanism => lc $mech,
+        (
+            $domain
+                ? ( domain => $domain ) :
+                ( )
+        ),
+        (
+            $ipaddr
+                ? ( ( defined $bitmask ? 'network' : 'ipaddress' ) => $ipaddr )
+                : ( )
+        ),
+        (
+            defined $bitmask
+                ? ( bitmask => $bitmask )
+                : ( )
+        ),
+    };
+}
+
+sub _mech_domain {
+    my ( $self, $qualifer, $mech, $domain ) = @_;
+
+    return $self->_mech_generic( $qualifer, $mech, $domain, undef, undef );
+}
+
+sub _mech_domain_bitmask {
+    my ( $self, $qualifer, $mech, $domain, $bitmask ) = @_;
+
+    return $self->_mech_generic( $qualifer, $mech, $domain, undef, $bitmask );
+}
+
+sub _mech_ipaddr_bitmask {
+    my ( $self, $qualifer, $mech, $ipaddr, $bitmask ) = @_;
+
+    return $self->_mech_generic( $qualifer, $mech, undef, $ipaddr, $bitmask );
 }

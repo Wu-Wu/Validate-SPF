@@ -763,7 +763,7 @@ sub
 #line 30 "Parser.yp"
 {
             $_[1] eq 'v=spf1' and
-                return +{ type => 'ver', version => $_[1] };
+                return $_[0]->_ver_generic( $_[1] );
 
             $_[0]->raise_error( 'E_INVALID_VERSION', $_[1] );
         }
@@ -805,125 +805,121 @@ sub
          'modifier', 3,
 sub
 #line 60 "Parser.yp"
-{ +{ type => 'mod', modifier => lc $_[1], domain => $_[3] } }
+{
+            $_[0]->_mod_generic( $_[1], $_[3] );
+        }
     ],
     [#Rule 13
          'with_domain', 1,
 sub
-#line 66 "Parser.yp"
+#line 68 "Parser.yp"
 {
             $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] )
                 if $_[1] =~ /ip[46]/i;
             $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[1] )
                 if $_[1] =~ /exists|include/i;
 
-            +{
-                type => 'mech',
-                qualifer => '+',
-                mechanism => lc $_[1],
-                ( $_[1] =~ /all/i ? () : ( domain => '@' ) )
-            };
+            $_[0]->_mech_domain( '+', $_[1], $_[1] =~ /all/i ? undef : '@' );
         }
     ],
     [#Rule 14
          'with_domain', 2,
 sub
-#line 80 "Parser.yp"
+#line 77 "Parser.yp"
 {
             $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] . $_[2] )
                 if $_[2] =~ /ip[46]/i;
             $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[1] . $_[2] )
                 if $_[2] =~ /exists|include/i;
 
-            +{
-                type => 'mech',
-                qualifer => $_[1],
-                mechanism => lc $_[2],
-                ( $_[2] =~ /all/i ? () : ( domain => '@' ) )
-            };
+            $_[0]->_mech_domain( $_[1], $_[2], $_[2] =~ /all/i ? undef : '@' );
         }
     ],
     [#Rule 15
          'with_domain', 3,
 sub
-#line 94 "Parser.yp"
-{ +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], domain => $_[3] } }
+#line 86 "Parser.yp"
+{
+            $_[0]->_mech_domain( '+', $_[1], $_[3] );
+        }
     ],
     [#Rule 16
          'with_domain', 4,
 sub
-#line 96 "Parser.yp"
-{ +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], domain => $_[4] } }
+#line 90 "Parser.yp"
+{
+            $_[0]->_mech_domain( $_[1], $_[2], $_[4] );
+        }
     ],
     [#Rule 17
          'with_bitmask', 3,
 sub
-#line 102 "Parser.yp"
+#line 98 "Parser.yp"
 {
             $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] . '/' . $_[3] )
                 if $_[1] =~ /ip[46]/i;
 
-            +{
-                type => 'mech',
-                qualifer => '+',
-                mechanism => lc $_[1],
-                domain => '@',
-                bitmask => $_[3]
-            };
+            $_[0]->_mech_domain_bitmask( '+', $_[1], '@', $_[3] );
         }
     ],
     [#Rule 18
          'with_bitmask', 4,
 sub
-#line 115 "Parser.yp"
+#line 105 "Parser.yp"
 {
             $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] . $_[2] . '/' . $_[4] )
                 if $_[2] =~ /ip[46]/i;
 
-            +{
-                type => 'mech',
-                qualifer => $_[1],
-                mechanism => lc $_[2],
-                domain => '@',
-                bitmask => $_[4]
-            };
+            $_[0]->_mech_domain_bitmask( $_[1], $_[2], '@', $_[4] );
         }
     ],
     [#Rule 19
          'with_domain_bitmask', 5,
 sub
-#line 132 "Parser.yp"
-{ +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], domain => $_[3], bitmask => $_[5] } }
+#line 116 "Parser.yp"
+{
+            $_[0]->_mech_domain_bitmask( '+', $_[1], $_[3], $_[5] );
+        }
     ],
     [#Rule 20
          'with_domain_bitmask', 6,
 sub
-#line 134 "Parser.yp"
-{ +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], domain => $_[4], bitmask => $_[6] } }
+#line 120 "Parser.yp"
+{
+            $_[0]->_mech_domain_bitmask( $_[1], $_[2], $_[4], $_[6] );
+        }
     ],
     [#Rule 21
          'with_ipaddress', 3,
 sub
-#line 140 "Parser.yp"
-{ +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], ipaddress => $_[3] } }
+#line 128 "Parser.yp"
+{
+            $_[0]->_mech_ipaddr_bitmask( '+', $_[1], $_[3], undef );
+        }
     ],
     [#Rule 22
          'with_ipaddress', 4,
 sub
-#line 142 "Parser.yp"
-{ +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], ipaddress => $_[4] } }
+#line 132 "Parser.yp"
+{
+            $_[0]->_mech_ipaddr_bitmask( $_[1], $_[2], $_[4], undef );
+        }
     ],
     [#Rule 23
          'with_ipaddress', 5,
 sub
-#line 144 "Parser.yp"
-{ +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], network => $_[3], bitmask => $_[5] } }
+#line 136 "Parser.yp"
+{
+            $_[0]->_mech_ipaddr_bitmask( '+', $_[1], $_[3], $_[5] );
+        }
     ],
     [#Rule 24
          'with_ipaddress', 6,
 sub
-#line 146 "Parser.yp"
-{ +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], network => $_[4], bitmask => $_[6] } }
+#line 140 "Parser.yp"
+{
+            $_[0]->_mech_ipaddr_bitmask( $_[1], $_[2], $_[4], $_[6] );
+        }
     ]
 ],
             @_
@@ -979,7 +975,9 @@ Here is an example
        context => "",
     }
 
-=for Pod::Coverage _error _lexer _build_error
+=for Pod::Coverage _error _lexer _build_error _ver_generic _mod_generic
+
+=for Pod::Coverage _mech_generic _mech_domain _mech_domain_bitmask _mech_ipaddr_bitmask
 
 =head1 ERROR HANDLING
 
@@ -1052,7 +1050,7 @@ L<Parse::Yapp>
 
 =cut
 
-#line 149 "Parser.yp"
+#line 145 "Parser.yp"
 
 
 sub parse {
@@ -1146,6 +1144,76 @@ sub _lexer {
 
     # EOF
     return ( '', undef );
+}
+
+# generic modifier
+sub _mod_generic {
+    my ( $self, $mod, $domain ) = @_;
+
+    return +{
+        type => 'mod',
+        modifier => lc $mod,
+        (
+            $domain
+                ? ( domain => $domain ) :
+                ( )
+        ),
+    };
+}
+
+# generic version
+sub _ver_generic {
+    my ( $self, $ver ) = @_;
+
+    return +{
+        type => 'ver',
+        version => lc $ver,
+    };
+}
+
+
+# generic mechanism
+sub _mech_generic {
+    my ( $self, $qualifer, $mech, $domain, $ipaddr, $bitmask ) = @_;
+
+    return +{
+        type => 'mech',
+        qualifer => $qualifer,
+        mechanism => lc $mech,
+        (
+            $domain
+                ? ( domain => $domain ) :
+                ( )
+        ),
+        (
+            $ipaddr
+                ? ( ( defined $bitmask ? 'network' : 'ipaddress' ) => $ipaddr )
+                : ( )
+        ),
+        (
+            defined $bitmask
+                ? ( bitmask => $bitmask )
+                : ( )
+        ),
+    };
+}
+
+sub _mech_domain {
+    my ( $self, $qualifer, $mech, $domain ) = @_;
+
+    return $self->_mech_generic( $qualifer, $mech, $domain, undef, undef );
+}
+
+sub _mech_domain_bitmask {
+    my ( $self, $qualifer, $mech, $domain, $bitmask ) = @_;
+
+    return $self->_mech_generic( $qualifer, $mech, $domain, undef, $bitmask );
+}
+
+sub _mech_ipaddr_bitmask {
+    my ( $self, $qualifer, $mech, $ipaddr, $bitmask ) = @_;
+
+    return $self->_mech_generic( $qualifer, $mech, undef, $ipaddr, $bitmask );
 }
 
 1;

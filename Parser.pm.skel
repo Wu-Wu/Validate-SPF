@@ -113,7 +113,9 @@ Here is an example
        context => "",
     }
 
-=for Pod::Coverage _error _lexer _build_error
+=for Pod::Coverage _error _lexer _build_error _ver_generic _mod_generic
+
+=for Pod::Coverage _mech_generic _mech_domain _mech_domain_bitmask _mech_ipaddr_bitmask
 
 =head1 ERROR HANDLING
 
