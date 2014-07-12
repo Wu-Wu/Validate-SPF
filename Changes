@@ -2,6 +2,9 @@ Revision history for Perl extension Validate::SPF.
 
 {{$NEXT}}
 
+    [ FEATURES ]
+    - replace spf regex mathing with parsing
+
     [ DOCUMENTATION ]
     - basic documentation for _validate_* funtions family added.
 
