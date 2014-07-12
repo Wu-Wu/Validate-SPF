@@ -556,8 +556,8 @@ sub new {
     {#State 0
         ACTIONS => {
             'MECHANISM' => 2,
-            'QUALIFER' => 11,
             'MODIFIER' => 3,
+            'QUALIFIER' => 7,
             'VERSION' => 13
         },
         GOTOS => {
@@ -565,10 +565,10 @@ sub new {
             'version' => 6,
             'with_bitmask' => 5,
             'with_domain' => 4,
-            'with_domain_bitmask' => 7,
-            'modifier' => 8,
-            'chunks' => 9,
-            'with_ipaddress' => 10,
+            'with_domain_bitmask' => 8,
+            'modifier' => 9,
+            'chunks' => 10,
+            'with_ipaddress' => 11,
             'chunk' => 14,
             'spf' => 12
         }
@@ -598,16 +598,21 @@ sub new {
         DEFAULT => -5
     },
     {#State 7
-        DEFAULT => -9
+        ACTIONS => {
+            'MECHANISM' => 18
+        }
     },
     {#State 8
-        DEFAULT => -7
+        DEFAULT => -9
     },
     {#State 9
+        DEFAULT => -7
+    },
+    {#State 10
         ACTIONS => {
             'MECHANISM' => 2,
-            'QUALIFER' => 11,
             'MODIFIER' => 3,
+            'QUALIFIER' => 7,
             'VERSION' => 13
         },
         DEFAULT => -1,
@@ -616,19 +621,14 @@ sub new {
             'version' => 6,
             'with_bitmask' => 5,
             'with_domain' => 4,
-            'with_domain_bitmask' => 7,
-            'modifier' => 8,
-            'with_ipaddress' => 10,
-            'chunk' => 18
+            'with_domain_bitmask' => 8,
+            'modifier' => 9,
+            'with_ipaddress' => 11,
+            'chunk' => 19
         }
-    },
-    {#State 10
-        DEFAULT => -8
     },
     {#State 11
-        ACTIONS => {
-            'MECHANISM' => 19
-        }
+        DEFAULT => -8
     },
     {#State 12
         ACTIONS => {
@@ -658,14 +658,14 @@ sub new {
         }
     },
     {#State 18
-        DEFAULT => -3
-    },
-    {#State 19
         ACTIONS => {
             ":" => 25,
             "/" => 26
         },
         DEFAULT => -14
+    },
+    {#State 19
+        DEFAULT => -3
     },
     {#State 20
         DEFAULT => 0
@@ -1116,9 +1116,9 @@ sub _lexer {
         s/^(\=)\b//i
             and return ( '=', '=' );
 
-        # qualifers
+        # qualifiers
         s/^([-~\+\?])\b//i
-            and return ( 'QUALIFER', $1 );
+            and return ( 'QUALIFIER', $1 );
 
         # mechanisms
         s/^(all|ptr|a|mx|ip4|ip6|exists|include)\b//i
@@ -1174,11 +1174,11 @@ sub _ver_generic {
 
 # generic mechanism
 sub _mech_generic {
-    my ( $self, $qualifer, $mech, $domain, $ipaddr, $bitmask ) = @_;
+    my ( $self, $qualifier, $mech, $domain, $ipaddr, $bitmask ) = @_;
 
     return +{
         type => 'mech',
-        qualifer => $qualifer,
+        qualifier => $qualifier,
         mechanism => lc $mech,
         (
             $domain
@@ -1199,21 +1199,21 @@ sub _mech_generic {
 }
 
 sub _mech_domain {
-    my ( $self, $qualifer, $mech, $domain ) = @_;
+    my ( $self, $qualifier, $mech, $domain ) = @_;
 
-    return $self->_mech_generic( $qualifer, $mech, $domain, undef, undef );
+    return $self->_mech_generic( $qualifier, $mech, $domain, undef, undef );
 }
 
 sub _mech_domain_bitmask {
-    my ( $self, $qualifer, $mech, $domain, $bitmask ) = @_;
+    my ( $self, $qualifier, $mech, $domain, $bitmask ) = @_;
 
-    return $self->_mech_generic( $qualifer, $mech, $domain, undef, $bitmask );
+    return $self->_mech_generic( $qualifier, $mech, $domain, undef, $bitmask );
 }
 
 sub _mech_ipaddr_bitmask {
-    my ( $self, $qualifer, $mech, $ipaddr, $bitmask ) = @_;
+    my ( $self, $qualifier, $mech, $ipaddr, $bitmask ) = @_;
 
-    return $self->_mech_generic( $qualifer, $mech, undef, $ipaddr, $bitmask );
+    return $self->_mech_generic( $qualifier, $mech, undef, $ipaddr, $bitmask );
 }
 
 1;
