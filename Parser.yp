@@ -51,60 +51,53 @@ mechanism
     | with_domain_bitmask
     | with_bitmask
     | with_domain
-    | bare
     ;
 
 modifier
     : MODIFIER '=' DOMAIN
-        { +{ type => 'mod', modifier => $_[1], domain => $_[3] } }
+        { +{ type => 'mod', modifier => lc $_[1], domain => $_[3] } }
     ;
 
-# all
-bare
-    : ALL
-        { +{ type => 'mech', qualifer => '+', mechanism => $_[1] } }
-    | QUALIFER ALL
-        { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2] } }
-    ;
-
-# ptr, exists, include, mx, a
+# ptr, exists, include, mx, a, all
 with_domain
     : MECHANISM
-        { +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => '@' } }
+        { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1],
+            ( $_[1] =~ /all/i ? () : ( domain => '@' ) ) } }
     | QUALIFER MECHANISM
-        { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => '@' } }
+        { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2],
+            ( $_[2] =~ /all/i ? () : ( domain => '@' ) ) } }
     | MECHANISM ':' DOMAIN
-        { +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => $_[3] } }
+        { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], domain => $_[3] } }
     | QUALIFER MECHANISM ':' DOMAIN
-        { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => $_[4] } }
+        { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], domain => $_[4] } }
     ;
 
 # mx, a
 with_bitmask
     : MECHANISM '/' BITMASK
-        { +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => '@', bitmask => $_[3] } }
+        { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], domain => '@', bitmask => $_[3] } }
     | QUALIFER MECHANISM '/' BITMASK
-        { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => '@', bitmask => $_[4] } }
+        { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], domain => '@', bitmask => $_[4] } }
     ;
 
 # mx, a
 with_domain_bitmask
     : MECHANISM ':' DOMAIN '/' BITMASK
-        { +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => $_[3], bitmask => $_[5] } }
+        { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], domain => $_[3], bitmask => $_[5] } }
     | QUALIFER MECHANISM ':' DOMAIN '/' BITMASK
-        { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => $_[4], bitmask => $_[6] } }
+        { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], domain => $_[4], bitmask => $_[6] } }
     ;
 
 # ip4, ip6
 with_ipaddress
     : MECHANISM ':' IPADDRESS
-        { +{ type => 'mech', qualifer => '+', mechanism => $_[1], ipaddress => $_[3] } }
+        { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], ipaddress => $_[3] } }
     | QUALIFER MECHANISM ':' IPADDRESS
-        { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], ipaddress => $_[4] } }
+        { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], ipaddress => $_[4] } }
     | MECHANISM ':' IPADDRESS '/' BITMASK
-        { +{ type => 'mech', qualifer => '+', mechanism => $_[1], network => $_[3], bitmask => $_[5] } }
+        { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], network => $_[3], bitmask => $_[5] } }
     | QUALIFER MECHANISM ':' IPADDRESS '/' BITMASK
-        { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], network => $_[4], bitmask => $_[6] } }
+        { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], network => $_[4], bitmask => $_[6] } }
     ;
 
 %%
