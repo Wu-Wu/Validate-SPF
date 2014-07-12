@@ -43,6 +43,7 @@ chunks
 chunk
     : version
     | mechanism
+    | modifier
     ;
 
 mechanism
@@ -51,6 +52,11 @@ mechanism
     | with_bitmask
     | with_domain
     | bare
+    ;
+
+modifier
+    : MODIFIER '=' DOMAIN
+        { +{ type => 'mod', modifier => $_[1], domain => $_[3] } }
     ;
 
 # all
@@ -173,6 +179,10 @@ sub _lexer {
         # mechanisms
         s/^(all|ptr|a|mx|ip4|ip6|exists|include)\b//i
             and return ( 'MECHANISM', $1 );
+
+        # modifiers
+        s/^(redirect|exp)\b//i
+            and return ( 'MODIFIER', $1 );
 
         s/^($RE{net}{IPv4}{dec}|$RE{net}{IPv6}{-sep=>':'})\b//i
             and return ( 'IPADDRESS', $1 );

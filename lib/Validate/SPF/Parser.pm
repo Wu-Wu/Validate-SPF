@@ -553,190 +553,210 @@ sub new {
             yystates    => [
     {#State 0
         ACTIONS => {
-            'MECHANISM' => 2,
-            'ALL' => 3,
-            'QUALIFER' => 11,
-            'VERSION' => 13
+            'MECHANISM' => 9,
+            'ALL' => 11,
+            'MODIFIER' => 13,
+            'QUALIFER' => 6,
+            'VERSION' => 16
         },
         GOTOS => {
             'mechanism' => 1,
-            'bare' => 4,
-            'version' => 7,
-            'with_bitmask' => 6,
-            'with_domain' => 5,
-            'with_domain_bitmask' => 8,
-            'chunks' => 9,
-            'with_ipaddress' => 10,
-            'chunk' => 14,
-            'spf' => 12
+            'bare' => 10,
+            'version' => 12,
+            'with_bitmask' => 3,
+            'with_domain' => 2,
+            'with_domain_bitmask' => 4,
+            'modifier' => 5,
+            'chunks' => 15,
+            'with_ipaddress' => 14,
+            'spf' => 7,
+            'chunk' => 8
         }
     },
     {#State 1
         DEFAULT => -6
     },
     {#State 2
-        ACTIONS => {
-            ":" => 15,
-            "/" => 16
-        },
-        DEFAULT => -14
-    },
-    {#State 3
-        DEFAULT => -12
-    },
-    {#State 4
         DEFAULT => -11
     },
-    {#State 5
+    {#State 3
         DEFAULT => -10
     },
-    {#State 6
+    {#State 4
         DEFAULT => -9
     },
+    {#State 5
+        DEFAULT => -7
+    },
+    {#State 6
+        ACTIONS => {
+            'MECHANISM' => 17,
+            'ALL' => 18
+        }
+    },
     {#State 7
-        DEFAULT => -5
+        ACTIONS => {
+            '' => 19
+        }
     },
     {#State 8
-        DEFAULT => -8
+        DEFAULT => -4
     },
     {#State 9
         ACTIONS => {
-            'MECHANISM' => 2,
-            'ALL' => 3,
-            'QUALIFER' => 11,
-            'VERSION' => 13
+            ":" => 20,
+            "/" => 21
+        },
+        DEFAULT => -16
+    },
+    {#State 10
+        DEFAULT => -12
+    },
+    {#State 11
+        DEFAULT => -14
+    },
+    {#State 12
+        DEFAULT => -5
+    },
+    {#State 13
+        ACTIONS => {
+            "=" => 22
+        }
+    },
+    {#State 14
+        DEFAULT => -8
+    },
+    {#State 15
+        ACTIONS => {
+            'MECHANISM' => 9,
+            'ALL' => 11,
+            'MODIFIER' => 13,
+            'QUALIFER' => 6,
+            'VERSION' => 16
         },
         DEFAULT => -1,
         GOTOS => {
             'mechanism' => 1,
-            'bare' => 4,
-            'version' => 7,
-            'with_bitmask' => 6,
-            'with_domain' => 5,
-            'with_domain_bitmask' => 8,
-            'with_ipaddress' => 10,
-            'chunk' => 17
-        }
-    },
-    {#State 10
-        DEFAULT => -7
-    },
-    {#State 11
-        ACTIONS => {
-            'MECHANISM' => 18,
-            'ALL' => 19
-        }
-    },
-    {#State 12
-        ACTIONS => {
-            '' => 20
-        }
-    },
-    {#State 13
-        DEFAULT => -2
-    },
-    {#State 14
-        DEFAULT => -4
-    },
-    {#State 15
-        ACTIONS => {
-            'DOMAIN' => 21,
-            'IPADDRESS' => 22
+            'bare' => 10,
+            'version' => 12,
+            'with_bitmask' => 3,
+            'with_domain' => 2,
+            'with_domain_bitmask' => 4,
+            'modifier' => 5,
+            'with_ipaddress' => 14,
+            'chunk' => 23
         }
     },
     {#State 16
-        ACTIONS => {
-            'BITMASK' => 23
-        }
+        DEFAULT => -2
     },
     {#State 17
-        DEFAULT => -3
-    },
-    {#State 18
         ACTIONS => {
             ":" => 24,
             "/" => 25
         },
+        DEFAULT => -17
+    },
+    {#State 18
         DEFAULT => -15
     },
     {#State 19
-        DEFAULT => -13
+        DEFAULT => 0
     },
     {#State 20
-        DEFAULT => 0
+        ACTIONS => {
+            'DOMAIN' => 27,
+            'IPADDRESS' => 26
+        }
     },
     {#State 21
         ACTIONS => {
-            "/" => 26
-        },
-        DEFAULT => -16
+            'BITMASK' => 28
+        }
     },
     {#State 22
         ACTIONS => {
-            "/" => 27
-        },
-        DEFAULT => -22
+            'DOMAIN' => 29
+        }
     },
     {#State 23
-        DEFAULT => -18
+        DEFAULT => -3
     },
     {#State 24
         ACTIONS => {
-            'DOMAIN' => 28,
-            'IPADDRESS' => 29
+            'DOMAIN' => 31,
+            'IPADDRESS' => 30
         }
     },
     {#State 25
         ACTIONS => {
-            'BITMASK' => 30
+            'BITMASK' => 32
         }
     },
     {#State 26
         ACTIONS => {
-            'BITMASK' => 31
-        }
+            "/" => 33
+        },
+        DEFAULT => -24
     },
     {#State 27
         ACTIONS => {
-            'BITMASK' => 32
-        }
-    },
-    {#State 28
-        ACTIONS => {
-            "/" => 33
-        },
-        DEFAULT => -17
-    },
-    {#State 29
-        ACTIONS => {
             "/" => 34
         },
-        DEFAULT => -23
+        DEFAULT => -18
     },
-    {#State 30
-        DEFAULT => -19
-    },
-    {#State 31
+    {#State 28
         DEFAULT => -20
     },
+    {#State 29
+        DEFAULT => -13
+    },
+    {#State 30
+        ACTIONS => {
+            "/" => 35
+        },
+        DEFAULT => -25
+    },
+    {#State 31
+        ACTIONS => {
+            "/" => 36
+        },
+        DEFAULT => -19
+    },
     {#State 32
-        DEFAULT => -24
+        DEFAULT => -21
     },
     {#State 33
         ACTIONS => {
-            'BITMASK' => 35
+            'BITMASK' => 37
         }
     },
     {#State 34
         ACTIONS => {
-            'BITMASK' => 36
+            'BITMASK' => 38
         }
     },
     {#State 35
-        DEFAULT => -21
+        ACTIONS => {
+            'BITMASK' => 39
+        }
     },
     {#State 36
-        DEFAULT => -25
+        ACTIONS => {
+            'BITMASK' => 40
+        }
+    },
+    {#State 37
+        DEFAULT => -26
+    },
+    {#State 38
+        DEFAULT => -22
+    },
+    {#State 39
+        DEFAULT => -27
+    },
+    {#State 40
+        DEFAULT => -23
     }
 ],
             yyrules     => [
@@ -779,7 +799,7 @@ sub
          'chunk', 1, undef
     ],
     [#Rule 7
-         'mechanism', 1, undef
+         'chunk', 1, undef
     ],
     [#Rule 8
          'mechanism', 1, undef
@@ -794,87 +814,96 @@ sub
          'mechanism', 1, undef
     ],
     [#Rule 12
-         'bare', 1,
-sub
-#line 59 "Parser.yp"
-{ +{ type => 'mech', qualifer => '+', mechanism => $_[1] } }
+         'mechanism', 1, undef
     ],
     [#Rule 13
-         'bare', 2,
+         'modifier', 3,
 sub
-#line 61 "Parser.yp"
-{ +{ type => 'mech', qualifer => $_[1], mechanism => $_[2] } }
+#line 59 "Parser.yp"
+{ +{ type => 'mod', modifier => $_[1], domain => $_[3] } }
     ],
     [#Rule 14
-         'with_domain', 1,
+         'bare', 1,
 sub
-#line 67 "Parser.yp"
-{ +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => '@' } }
+#line 65 "Parser.yp"
+{ +{ type => 'mech', qualifer => '+', mechanism => $_[1] } }
     ],
     [#Rule 15
-         'with_domain', 2,
+         'bare', 2,
 sub
-#line 69 "Parser.yp"
-{ +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => '@' } }
+#line 67 "Parser.yp"
+{ +{ type => 'mech', qualifer => $_[1], mechanism => $_[2] } }
     ],
     [#Rule 16
-         'with_domain', 3,
-sub
-#line 71 "Parser.yp"
-{ +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => $_[3] } }
-    ],
-    [#Rule 17
-         'with_domain', 4,
+         'with_domain', 1,
 sub
 #line 73 "Parser.yp"
-{ +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => $_[4] } }
+{ +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => '@' } }
+    ],
+    [#Rule 17
+         'with_domain', 2,
+sub
+#line 75 "Parser.yp"
+{ +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => '@' } }
     ],
     [#Rule 18
-         'with_bitmask', 3,
+         'with_domain', 3,
 sub
-#line 79 "Parser.yp"
-{ +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => '@', bitmask => $_[3] } }
+#line 77 "Parser.yp"
+{ +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => $_[3] } }
     ],
     [#Rule 19
-         'with_bitmask', 4,
+         'with_domain', 4,
 sub
-#line 81 "Parser.yp"
-{ +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => '@', bitmask => $_[4] } }
+#line 79 "Parser.yp"
+{ +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => $_[4] } }
     ],
     [#Rule 20
-         'with_domain_bitmask', 5,
+         'with_bitmask', 3,
 sub
-#line 87 "Parser.yp"
-{ +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => $_[3], bitmask => $_[5] } }
+#line 85 "Parser.yp"
+{ +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => '@', bitmask => $_[3] } }
     ],
     [#Rule 21
-         'with_domain_bitmask', 6,
+         'with_bitmask', 4,
 sub
-#line 89 "Parser.yp"
-{ +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => $_[4], bitmask => $_[6] } }
+#line 87 "Parser.yp"
+{ +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => '@', bitmask => $_[4] } }
     ],
     [#Rule 22
-         'with_ipaddress', 3,
+         'with_domain_bitmask', 5,
 sub
-#line 95 "Parser.yp"
-{ +{ type => 'mech', qualifer => '+', mechanism => $_[1], ipaddress => $_[3] } }
+#line 93 "Parser.yp"
+{ +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => $_[3], bitmask => $_[5] } }
     ],
     [#Rule 23
-         'with_ipaddress', 4,
+         'with_domain_bitmask', 6,
 sub
-#line 97 "Parser.yp"
-{ +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], ipaddress => $_[4] } }
+#line 95 "Parser.yp"
+{ +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => $_[4], bitmask => $_[6] } }
     ],
     [#Rule 24
-         'with_ipaddress', 5,
-sub
-#line 99 "Parser.yp"
-{ +{ type => 'mech', qualifer => '+', mechanism => $_[1], network => $_[3], bitmask => $_[5] } }
-    ],
-    [#Rule 25
-         'with_ipaddress', 6,
+         'with_ipaddress', 3,
 sub
 #line 101 "Parser.yp"
+{ +{ type => 'mech', qualifer => '+', mechanism => $_[1], ipaddress => $_[3] } }
+    ],
+    [#Rule 25
+         'with_ipaddress', 4,
+sub
+#line 103 "Parser.yp"
+{ +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], ipaddress => $_[4] } }
+    ],
+    [#Rule 26
+         'with_ipaddress', 5,
+sub
+#line 105 "Parser.yp"
+{ +{ type => 'mech', qualifer => '+', mechanism => $_[1], network => $_[3], bitmask => $_[5] } }
+    ],
+    [#Rule 27
+         'with_ipaddress', 6,
+sub
+#line 107 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], network => $_[4], bitmask => $_[6] } }
     ]
 ],
@@ -984,7 +1013,7 @@ L<Parse::Yapp>
 
 =cut
 
-#line 104 "Parser.yp"
+#line 110 "Parser.yp"
 
 
 sub parse {
@@ -1057,6 +1086,10 @@ sub _lexer {
         # mechanisms
         s/^(all|ptr|a|mx|ip4|ip6|exists|include)\b//i
             and return ( 'MECHANISM', $1 );
+
+        # modifiers
+        s/^(redirect|exp)\b//i
+            and return ( 'MODIFIER', $1 );
 
         s/^($RE{net}{IPv4}{dec}|$RE{net}{IPv6}{-sep=>':'})\b//i
             and return ( 'IPADDRESS', $1 );
