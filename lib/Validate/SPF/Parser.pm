@@ -506,6 +506,8 @@ sub _Parse {
 # Author: Anton Gerasimov
 #
 
+use Regexp::Common qw( net );
+
 my $input;
 
 my %errors = (
@@ -744,13 +746,13 @@ sub new {
     [#Rule 1
          'spf', 1,
 sub
-#line 21 "Parser.yp"
+#line 23 "Parser.yp"
 { $_[1] }
     ],
     [#Rule 2
          'version', 1,
 sub
-#line 26 "Parser.yp"
+#line 28 "Parser.yp"
 {
             $_[1] eq 'v=spf1' and
                 return +{ type => 'ver', version => $_[1] };
@@ -761,13 +763,13 @@ sub
     [#Rule 3
          'chunks', 2,
 sub
-#line 36 "Parser.yp"
+#line 38 "Parser.yp"
 { push( @{$_[1]}, $_[2] ) if defined $_[2]; $_[1] }
     ],
     [#Rule 4
          'chunks', 1,
 sub
-#line 38 "Parser.yp"
+#line 40 "Parser.yp"
 { defined $_[1] ? [ $_[1] ] : [ ] }
     ],
     [#Rule 5
@@ -794,85 +796,85 @@ sub
     [#Rule 12
          'bare', 1,
 sub
-#line 57 "Parser.yp"
+#line 59 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => $_[1] } }
     ],
     [#Rule 13
          'bare', 2,
 sub
-#line 59 "Parser.yp"
+#line 61 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2] } }
     ],
     [#Rule 14
          'with_domain', 1,
 sub
-#line 65 "Parser.yp"
+#line 67 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => '@' } }
     ],
     [#Rule 15
          'with_domain', 2,
 sub
-#line 67 "Parser.yp"
+#line 69 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => '@' } }
     ],
     [#Rule 16
          'with_domain', 3,
 sub
-#line 69 "Parser.yp"
+#line 71 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => $_[3] } }
     ],
     [#Rule 17
          'with_domain', 4,
 sub
-#line 71 "Parser.yp"
+#line 73 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => $_[4] } }
     ],
     [#Rule 18
          'with_bitmask', 3,
 sub
-#line 77 "Parser.yp"
+#line 79 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => '@', bitmask => $_[3] } }
     ],
     [#Rule 19
          'with_bitmask', 4,
 sub
-#line 79 "Parser.yp"
+#line 81 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => '@', bitmask => $_[4] } }
     ],
     [#Rule 20
          'with_domain_bitmask', 5,
 sub
-#line 85 "Parser.yp"
+#line 87 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => $_[1], domain => $_[3], bitmask => $_[5] } }
     ],
     [#Rule 21
          'with_domain_bitmask', 6,
 sub
-#line 87 "Parser.yp"
+#line 89 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], domain => $_[4], bitmask => $_[6] } }
     ],
     [#Rule 22
          'with_ipaddress', 3,
 sub
-#line 93 "Parser.yp"
+#line 95 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => $_[1], ipaddress => $_[3] } }
     ],
     [#Rule 23
          'with_ipaddress', 4,
 sub
-#line 95 "Parser.yp"
+#line 97 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], ipaddress => $_[4] } }
     ],
     [#Rule 24
          'with_ipaddress', 5,
 sub
-#line 97 "Parser.yp"
+#line 99 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => $_[1], network => $_[3], bitmask => $_[5] } }
     ],
     [#Rule 25
          'with_ipaddress', 6,
 sub
-#line 99 "Parser.yp"
+#line 101 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => $_[2], network => $_[4], bitmask => $_[6] } }
     ]
 ],
@@ -982,7 +984,7 @@ L<Parse::Yapp>
 
 =cut
 
-#line 102 "Parser.yp"
+#line 104 "Parser.yp"
 
 
 sub parse {
@@ -1056,7 +1058,7 @@ sub _lexer {
         s/^(all|ptr|a|mx|ip4|ip6|exists|include)\b//i
             and return ( 'MECHANISM', $1 );
 
-        s/^((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|(([a-f\d]{1,4}:){7,7}[a-f\d]{1,4}|([a-f\d]{1,4}:){1,7}:|([a-f\d]{1,4}:){1,6}:[a-f\d]{1,4}|([a-f\d]{1,4}:){1,5}(:[a-f\d]{1,4}){1,2}|([a-f\d]{1,4}:){1,4}(:[a-f\d]{1,4}){1,3}|([a-f\d]{1,4}:){1,3}(:[a-f\d]{1,4}){1,4}|([a-f\d]{1,4}:){1,2}(:[a-f\d]{1,4}){1,5}|[a-f\d]{1,4}:((:[a-f\d]{1,4}){1,6})|:((:[a-f\d]{1,4}){1,7}|:)|fe80:(:[a-f\d]{0,4}){0,4}%[a-z\d]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[\d]){0,1}[\d])|([a-f\d]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[\d]){0,1}[\d]).){3,3}(25[0-5]|(2[0-4]|1{0,1}[\d]){0,1}[\d])))\b//i
+        s/^($RE{net}{IPv4}{dec}|$RE{net}{IPv6}{-sep=>':'})\b//i
             and return ( 'IPADDRESS', $1 );
 
         s/^([_\.a-z\d][\-a-z\d]*\.[\.\-a-z\d]*[a-z\d]?)\b//i

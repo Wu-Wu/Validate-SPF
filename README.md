@@ -2,6 +2,8 @@
 
 Validate::SPF - Validates SPF text string
 
+[![Build Status](https://travis-ci.org/Wu-Wu/Validate-SPF.svg?branch=master)](https://travis-ci.org/Wu-Wu/Validate-SPF)
+
 # VERSION
 
 version 0.002
