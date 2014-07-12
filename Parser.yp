@@ -64,8 +64,10 @@ modifier
 with_domain
     : MECHANISM
         {
-            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] )    if $_[1] =~ /ip[46]/i;
-            $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[1] )    if $_[1] =~ /exists|include/i;
+            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] )
+                if $_[1] =~ /ip[46]/i;
+            $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[1] )
+                if $_[1] =~ /exists|include/i;
 
             +{
                 type => 'mech',
@@ -76,8 +78,10 @@ with_domain
         }
     | QUALIFER MECHANISM
         {
-            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[2] )    if $_[2] =~ /ip[46]/i;
-            $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[2] )    if $_[2] =~ /exists|include/i;
+            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] . $_[2] )
+                if $_[2] =~ /ip[46]/i;
+            $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[1] . $_[2] )
+                if $_[2] =~ /exists|include/i;
 
             +{
                 type => 'mech',
@@ -95,9 +99,31 @@ with_domain
 # mx, a
 with_bitmask
     : MECHANISM '/' BITMASK
-        { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], domain => '@', bitmask => $_[3] } }
+        {
+            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] . '/' . $_[3] )
+                if $_[1] =~ /ip[46]/i;
+
+            +{
+                type => 'mech',
+                qualifer => '+',
+                mechanism => lc $_[1],
+                domain => '@',
+                bitmask => $_[3]
+            };
+        }
     | QUALIFER MECHANISM '/' BITMASK
-        { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], domain => '@', bitmask => $_[4] } }
+        {
+            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] . $_[2] . '/' . $_[4] )
+                if $_[2] =~ /ip[46]/i;
+
+            +{
+                type => 'mech',
+                qualifer => $_[1],
+                mechanism => lc $_[2],
+                domain => '@',
+                bitmask => $_[4]
+            };
+        }
     ;
 
 # mx, a

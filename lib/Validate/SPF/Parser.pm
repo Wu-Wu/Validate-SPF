@@ -812,8 +812,10 @@ sub
 sub
 #line 66 "Parser.yp"
 {
-            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] )    if $_[1] =~ /ip[46]/i;
-            $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[1] )    if $_[1] =~ /exists|include/i;
+            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] )
+                if $_[1] =~ /ip[46]/i;
+            $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[1] )
+                if $_[1] =~ /exists|include/i;
 
             +{
                 type => 'mech',
@@ -826,10 +828,12 @@ sub
     [#Rule 14
          'with_domain', 2,
 sub
-#line 78 "Parser.yp"
+#line 80 "Parser.yp"
 {
-            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[2] )    if $_[2] =~ /ip[46]/i;
-            $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[2] )    if $_[2] =~ /exists|include/i;
+            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] . $_[2] )
+                if $_[2] =~ /ip[46]/i;
+            $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[1] . $_[2] )
+                if $_[2] =~ /exists|include/i;
 
             +{
                 type => 'mech',
@@ -842,61 +846,83 @@ sub
     [#Rule 15
          'with_domain', 3,
 sub
-#line 90 "Parser.yp"
+#line 94 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], domain => $_[3] } }
     ],
     [#Rule 16
          'with_domain', 4,
 sub
-#line 92 "Parser.yp"
+#line 96 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], domain => $_[4] } }
     ],
     [#Rule 17
          'with_bitmask', 3,
 sub
-#line 98 "Parser.yp"
-{ +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], domain => '@', bitmask => $_[3] } }
+#line 102 "Parser.yp"
+{
+            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] . '/' . $_[3] )
+                if $_[1] =~ /ip[46]/i;
+
+            +{
+                type => 'mech',
+                qualifer => '+',
+                mechanism => lc $_[1],
+                domain => '@',
+                bitmask => $_[3]
+            };
+        }
     ],
     [#Rule 18
          'with_bitmask', 4,
 sub
-#line 100 "Parser.yp"
-{ +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], domain => '@', bitmask => $_[4] } }
+#line 115 "Parser.yp"
+{
+            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] . $_[2] . '/' . $_[4] )
+                if $_[2] =~ /ip[46]/i;
+
+            +{
+                type => 'mech',
+                qualifer => $_[1],
+                mechanism => lc $_[2],
+                domain => '@',
+                bitmask => $_[4]
+            };
+        }
     ],
     [#Rule 19
          'with_domain_bitmask', 5,
 sub
-#line 106 "Parser.yp"
+#line 132 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], domain => $_[3], bitmask => $_[5] } }
     ],
     [#Rule 20
          'with_domain_bitmask', 6,
 sub
-#line 108 "Parser.yp"
+#line 134 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], domain => $_[4], bitmask => $_[6] } }
     ],
     [#Rule 21
          'with_ipaddress', 3,
 sub
-#line 114 "Parser.yp"
+#line 140 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], ipaddress => $_[3] } }
     ],
     [#Rule 22
          'with_ipaddress', 4,
 sub
-#line 116 "Parser.yp"
+#line 142 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], ipaddress => $_[4] } }
     ],
     [#Rule 23
          'with_ipaddress', 5,
 sub
-#line 118 "Parser.yp"
+#line 144 "Parser.yp"
 { +{ type => 'mech', qualifer => '+', mechanism => lc $_[1], network => $_[3], bitmask => $_[5] } }
     ],
     [#Rule 24
          'with_ipaddress', 6,
 sub
-#line 120 "Parser.yp"
+#line 146 "Parser.yp"
 { +{ type => 'mech', qualifer => $_[1], mechanism => lc $_[2], network => $_[4], bitmask => $_[6] } }
     ]
 ],
@@ -1026,7 +1052,7 @@ L<Parse::Yapp>
 
 =cut
 
-#line 123 "Parser.yp"
+#line 149 "Parser.yp"
 
 
 sub parse {

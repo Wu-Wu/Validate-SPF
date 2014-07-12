@@ -91,6 +91,17 @@ describe $module => sub {
                 { qualifer => '+', network => '7.8.9.10', bitmask => '33' },
         );
 
+        my @ip4s_not_ok = (
+            'ip4' =>
+                { code => 'E_IPADDR_EXPECTED', context => 'ip4' },
+            '?ip4' =>
+                { code => 'E_IPADDR_EXPECTED', context => '?ip4' },
+            'ip4/24' =>
+                { code => 'E_IPADDR_EXPECTED', context => 'ip4/24' },
+            '~ip4/' =>
+                { code => 'E_IPADDR_EXPECTED', context => '~ip4' },
+        );
+
         while ( my ( $case, $result ) = splice @ip4s_ok, 0, 2 ) {
             it "should return result for '$case'" => sub {
                 my $got_result = $stash{parser}->parse( $case );
@@ -98,11 +109,16 @@ describe $module => sub {
             };
         }
 
-        it "should return error E_IPADDR_EXPECTED for '?ip4'" => sub {
-            $stash{parser}->parse( '?ip4' );
+        while ( my ( $case, $err ) = splice @ip4s_not_ok, 0, 2 ) {
+            it "should return error $err->{code} for '$case'" => sub {
+                $stash{parser}->parse( $case );
 
-            is $stash{parser}->error->{code}, 'E_IPADDR_EXPECTED';
-        };
+                cmp_deeply(
+                    $stash{parser}->error,
+                    { %$err, text => ignore() }
+                );
+            };
+        }
     };
 };
 
