@@ -875,7 +875,7 @@ sub
                 if $_[1] =~ /ip[46]/i;
 
             $_[0]->raise_error( 'E_UNEXPECTED_BITMASK', $ctx )
-                if $_[1] =~ /\A(ptr|all)\Z/i;
+                if $_[1] =~ /\A(ptr|all|exists|include)\Z/i;
 
             $_[0]->_mech_domain_bitmask( '+', $_[1], '@', $_[3] );
         }
@@ -891,7 +891,7 @@ sub
                 if $_[2] =~ /ip[46]/i;
 
             $_[0]->raise_error( 'E_UNEXPECTED_BITMASK', $ctx )
-                if $_[2] =~ /\A(ptr|all)\Z/i;
+                if $_[2] =~ /\A(ptr|all|exists|include)\Z/i;
 
             $_[0]->_mech_domain_bitmask( $_[1], $_[2], '@', $_[4] );
         }
@@ -904,7 +904,7 @@ sub
             my $ctx = $_[1] . ':' . $_[3] . '/' . $_[5];
 
             $_[0]->raise_error( 'E_UNEXPECTED_BITMASK', $ctx )
-                if $_[1] =~ /\A(ptr|all)\Z/i;
+                if $_[1] =~ /\A(ptr|all|exists|include)\Z/i;
 
             $_[0]->_mech_domain_bitmask( '+', $_[1], $_[3], $_[5] );
         }
@@ -917,7 +917,7 @@ sub
             my $ctx = $_[1] . $_[2] . ':' . $_[4] . '/' . $_[6];
 
             $_[0]->raise_error( 'E_UNEXPECTED_BITMASK', $ctx )
-                if $_[2] =~ /\A(ptr|all)\Z/i;
+                if $_[2] =~ /\A(ptr|all|exists|include)\Z/i;
 
             $_[0]->_mech_domain_bitmask( $_[1], $_[2], $_[4], $_[6] );
         }
@@ -930,7 +930,7 @@ sub
             my $ctx = $_[1] . ':' . $_[3];
 
             $_[0]->raise_error( 'E_UNEXPECTED_IPADDR', $ctx )
-                if $_[1] =~ /\A(a|mx|ptr|all)\Z/i;
+                if $_[1] =~ /\A(a|mx|ptr|all|exists|include)\Z/i;
 
             $_[0]->_mech_ipaddr_bitmask( '+', $_[1], $_[3], undef );
         }
@@ -943,7 +943,7 @@ sub
             my $ctx = $_[1] . $_[2] . ':' . $_[4];
 
             $_[0]->raise_error( 'E_UNEXPECTED_IPADDR', $ctx )
-                if $_[2] =~ /\A(a|mx|ptr|all)\Z/i;
+                if $_[2] =~ /\A(a|mx|ptr|all|exists|include)\Z/i;
 
             $_[0]->_mech_ipaddr_bitmask( $_[1], $_[2], $_[4], undef );
         }
@@ -956,7 +956,7 @@ sub
             my $ctx = $_[1] . ':' . $_[3] . '/' . $_[5];
 
             $_[0]->raise_error( 'E_UNEXPECTED_IPADDR', $ctx )
-                if $_[1] =~ /\A(a|mx|ptr|all)\Z/i;
+                if $_[1] =~ /\A(a|mx|ptr|all|exists|include)\Z/i;
 
             $_[0]->_mech_ipaddr_bitmask( '+', $_[1], $_[3], $_[5] );
         }
@@ -969,7 +969,7 @@ sub
             my $ctx = $_[1] . $_[2] . ':' . $_[4] . '/' . $_[6];
 
             $_[0]->raise_error( 'E_UNEXPECTED_IPADDR', $ctx )
-                if $_[2] =~ /\A(a|mx|ptr|all)\Z/i;
+                if $_[2] =~ /\A(a|mx|ptr|all|exists|include)\Z/i;
 
             $_[0]->_mech_ipaddr_bitmask( $_[1], $_[2], $_[4], $_[6] );
         }
