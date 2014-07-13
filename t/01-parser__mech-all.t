@@ -22,6 +22,8 @@ describe "Validate::SPF::Parser [$mech]" => sub {
             { qualifier => '-' },
         '+all' =>
             { qualifier => '+' },
+        '~all' =>
+            { qualifier => '~' },
         '?All' =>
             { qualifier => '?' },
     );
