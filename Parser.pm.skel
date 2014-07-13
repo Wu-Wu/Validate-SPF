@@ -163,7 +163,7 @@ Returned in cases of C<exists> or C<include> token has been used without domain 
 
 =head2 E_UNEXPECTED_BITMASK
 
-Returned in cases of C<ptr> token has been used with bitmask.
+Returned in cases of C<ptr> or C<all> token has been used with bitmask.
 
     {
         code    => "E_UNEXPECTED_BITMASK",
@@ -173,12 +173,22 @@ Returned in cases of C<ptr> token has been used with bitmask.
 
 =head2 E_UNEXPECTED_IPADDR
 
-Returned in cases of C<ptr> token has been used with ip or network address.
+Returned in cases of C<ptr> or C<all> token has been used with ip or network address.
 
     {
         code    => "E_UNEXPECTED_IPADDR",
         text    => "Unexpected ip address",
         context => "-ptr:127.0.0.1",
+    }
+
+=head2 E_UNEXPECTED_DOMAIN
+
+Returned in cases of C<all> token has been used with domain name.
+
+    {
+        code    => "E_UNEXPECTED_DOMAIN",
+        text    => "Unexpected domain name",
+        context => "-all:quux.com",
     }
 
 =head2 E_DEFAULT

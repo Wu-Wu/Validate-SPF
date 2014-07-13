@@ -27,11 +27,26 @@ describe "Validate::SPF::Parser [$mech]" => sub {
     );
 
     my @negative = (
-        # TODO
-        # 'all/24' =>
-        #     { code => 'E_UNEXPECTED_BITMASK', context => 'all/24' },
-        # '?all/32' =>
-        #     { code => 'E_UNEXPECTED_BITMASK', context => '?all/32' },
+        'all/24' =>
+            { code => 'E_UNEXPECTED_BITMASK', context => 'all/24' },
+        '?all/32' =>
+            { code => 'E_UNEXPECTED_BITMASK', context => '?all/32' },
+        'all:foo.bar.com' =>
+            { code => 'E_UNEXPECTED_DOMAIN', context => 'all:foo.bar.com' },
+        '-all:quux.com' =>
+            { code => 'E_UNEXPECTED_DOMAIN', context => '-all:quux.com' },
+        'all:quux.com/21' =>
+            { code => 'E_UNEXPECTED_BITMASK', context => 'all:quux.com/21' },
+        '~all:www.quux.com/32' =>
+            { code => 'E_UNEXPECTED_BITMASK', context => '~all:www.quux.com/32' },
+        'all:127.0.0.1' =>
+            { code => 'E_UNEXPECTED_IPADDR', context => 'all:127.0.0.1' },
+        '+all:127.0.0.9/8' =>
+            { code => 'E_UNEXPECTED_IPADDR', context => '+all:127.0.0.9/8' },
+        'all:fe80::6203:be4a' =>
+            { code => 'E_UNEXPECTED_IPADDR', context => 'all:fe80::6203:be4a' },
+        '?all:fe80::ffff/64' =>
+            { code => 'E_UNEXPECTED_IPADDR', context => '?all:fe80::ffff/64' },
         '%all' =>
             { code => 'E_SYNTAX', context => '<*>%all' },
     );

@@ -518,6 +518,7 @@ my %errors = (
     E_DOMAIN_EXPECTED       => "Expected domain name",
     E_UNEXPECTED_BITMASK    => "Unexpected bitmask",
     E_UNEXPECTED_IPADDR     => "Unexpected ip address",
+    E_UNEXPECTED_DOMAIN     => "Unexpected domain name",
 );
 
 
@@ -756,13 +757,13 @@ sub new {
     [#Rule 1
          'spf', 1,
 sub
-#line 27 "Parser.yp"
+#line 28 "Parser.yp"
 { $_[1] }
     ],
     [#Rule 2
          'version', 1,
 sub
-#line 32 "Parser.yp"
+#line 33 "Parser.yp"
 {
             $_[1] eq 'v=spf1' and
                 return $_[0]->_ver_generic( $_[1] );
@@ -773,13 +774,13 @@ sub
     [#Rule 3
          'chunks', 2,
 sub
-#line 42 "Parser.yp"
+#line 43 "Parser.yp"
 { push( @{$_[1]}, $_[2] ) if defined $_[2]; $_[1] }
     ],
     [#Rule 4
          'chunks', 1,
 sub
-#line 44 "Parser.yp"
+#line 45 "Parser.yp"
 { defined $_[1] ? [ $_[1] ] : [ ] }
     ],
     [#Rule 5
@@ -806,7 +807,7 @@ sub
     [#Rule 12
          'modifier', 3,
 sub
-#line 62 "Parser.yp"
+#line 63 "Parser.yp"
 {
             $_[0]->_mod_generic( $_[1], $_[3] );
         }
@@ -814,7 +815,7 @@ sub
     [#Rule 13
          'with_domain', 1,
 sub
-#line 70 "Parser.yp"
+#line 71 "Parser.yp"
 {
             $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] )
                 if $_[1] =~ /ip[46]/i;
@@ -827,7 +828,7 @@ sub
     [#Rule 14
          'with_domain', 2,
 sub
-#line 79 "Parser.yp"
+#line 80 "Parser.yp"
 {
             $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] . $_[2] )
                 if $_[2] =~ /ip[46]/i;
@@ -840,23 +841,33 @@ sub
     [#Rule 15
          'with_domain', 3,
 sub
-#line 88 "Parser.yp"
+#line 89 "Parser.yp"
 {
+            my $ctx = $_[1] . ':' . $_[3];
+
+            $_[0]->raise_error( 'E_UNEXPECTED_DOMAIN', $ctx )
+                if $_[1] =~ /all/i;
+
             $_[0]->_mech_domain( '+', $_[1], $_[3] );
         }
     ],
     [#Rule 16
          'with_domain', 4,
 sub
-#line 92 "Parser.yp"
+#line 98 "Parser.yp"
 {
+            my $ctx = $_[1] . $_[2] . ':' . $_[4];
+
+            $_[0]->raise_error( 'E_UNEXPECTED_DOMAIN', $ctx )
+                if $_[2] =~ /all/i;
+
             $_[0]->_mech_domain( $_[1], $_[2], $_[4] );
         }
     ],
     [#Rule 17
          'with_bitmask', 3,
 sub
-#line 100 "Parser.yp"
+#line 111 "Parser.yp"
 {
             my $ctx = $_[1] . '/' . $_[3];
 
@@ -864,7 +875,7 @@ sub
                 if $_[1] =~ /ip[46]/i;
 
             $_[0]->raise_error( 'E_UNEXPECTED_BITMASK', $ctx )
-                if $_[1] =~ /ptr/i;
+                if $_[1] =~ /ptr|all/i;
 
             $_[0]->_mech_domain_bitmask( '+', $_[1], '@', $_[3] );
         }
@@ -872,7 +883,7 @@ sub
     [#Rule 18
          'with_bitmask', 4,
 sub
-#line 112 "Parser.yp"
+#line 123 "Parser.yp"
 {
             my $ctx = $_[1] . $_[2] . '/' . $_[4];
 
@@ -880,7 +891,7 @@ sub
                 if $_[2] =~ /ip[46]/i;
 
             $_[0]->raise_error( 'E_UNEXPECTED_BITMASK', $ctx )
-                if $_[2] =~ /ptr/i;
+                if $_[2] =~ /ptr|all/i;
 
             $_[0]->_mech_domain_bitmask( $_[1], $_[2], '@', $_[4] );
         }
@@ -888,12 +899,12 @@ sub
     [#Rule 19
          'with_domain_bitmask', 5,
 sub
-#line 128 "Parser.yp"
+#line 139 "Parser.yp"
 {
             my $ctx = $_[1] . ':' . $_[3] . '/' . $_[5];
 
             $_[0]->raise_error( 'E_UNEXPECTED_BITMASK', $ctx )
-                if $_[1] =~ /ptr/i;
+                if $_[1] =~ /ptr|all/i;
 
             $_[0]->_mech_domain_bitmask( '+', $_[1], $_[3], $_[5] );
         }
@@ -901,12 +912,12 @@ sub
     [#Rule 20
          'with_domain_bitmask', 6,
 sub
-#line 137 "Parser.yp"
+#line 148 "Parser.yp"
 {
             my $ctx = $_[1] . $_[2] . ':' . $_[4] . '/' . $_[6];
 
             $_[0]->raise_error( 'E_UNEXPECTED_BITMASK', $ctx )
-                if $_[2] =~ /ptr/i;
+                if $_[2] =~ /ptr|all/i;
 
             $_[0]->_mech_domain_bitmask( $_[1], $_[2], $_[4], $_[6] );
         }
@@ -914,12 +925,12 @@ sub
     [#Rule 21
          'with_ipaddress', 3,
 sub
-#line 150 "Parser.yp"
+#line 161 "Parser.yp"
 {
             my $ctx = $_[1] . ':' . $_[3];
 
             $_[0]->raise_error( 'E_UNEXPECTED_IPADDR', $ctx )
-                if $_[1] =~ /ptr/i;
+                if $_[1] =~ /ptr|all/i;
 
             $_[0]->_mech_ipaddr_bitmask( '+', $_[1], $_[3], undef );
         }
@@ -927,12 +938,12 @@ sub
     [#Rule 22
          'with_ipaddress', 4,
 sub
-#line 159 "Parser.yp"
+#line 170 "Parser.yp"
 {
             my $ctx = $_[1] . $_[2] . ':' . $_[4];
 
             $_[0]->raise_error( 'E_UNEXPECTED_IPADDR', $ctx )
-                if $_[2] =~ /ptr/i;
+                if $_[2] =~ /ptr|all/i;
 
             $_[0]->_mech_ipaddr_bitmask( $_[1], $_[2], $_[4], undef );
         }
@@ -940,12 +951,12 @@ sub
     [#Rule 23
          'with_ipaddress', 5,
 sub
-#line 168 "Parser.yp"
+#line 179 "Parser.yp"
 {
             my $ctx = $_[1] . ':' . $_[3] . '/' . $_[5];
 
             $_[0]->raise_error( 'E_UNEXPECTED_IPADDR', $ctx )
-                if $_[1] =~ /ptr/i;
+                if $_[1] =~ /ptr|all/i;
 
             $_[0]->_mech_ipaddr_bitmask( '+', $_[1], $_[3], $_[5] );
         }
@@ -953,12 +964,12 @@ sub
     [#Rule 24
          'with_ipaddress', 6,
 sub
-#line 177 "Parser.yp"
+#line 188 "Parser.yp"
 {
             my $ctx = $_[1] . $_[2] . ':' . $_[4] . '/' . $_[6];
 
             $_[0]->raise_error( 'E_UNEXPECTED_IPADDR', $ctx )
-                if $_[2] =~ /ptr/i;
+                if $_[2] =~ /ptr|all/i;
 
             $_[0]->_mech_ipaddr_bitmask( $_[1], $_[2], $_[4], $_[6] );
         }
@@ -1067,7 +1078,7 @@ Returned in cases of C<exists> or C<include> token has been used without domain 
 
 =head2 E_UNEXPECTED_BITMASK
 
-Returned in cases of C<ptr> token has been used with bitmask.
+Returned in cases of C<ptr> or C<all> token has been used with bitmask.
 
     {
         code    => "E_UNEXPECTED_BITMASK",
@@ -1077,12 +1088,22 @@ Returned in cases of C<ptr> token has been used with bitmask.
 
 =head2 E_UNEXPECTED_IPADDR
 
-Returned in cases of C<ptr> token has been used with ip or network address.
+Returned in cases of C<ptr> or C<all> token has been used with ip or network address.
 
     {
         code    => "E_UNEXPECTED_IPADDR",
         text    => "Unexpected ip address",
         context => "-ptr:127.0.0.1",
+    }
+
+=head2 E_UNEXPECTED_DOMAIN
+
+Returned in cases of C<all> token has been used with domain name.
+
+    {
+        code    => "E_UNEXPECTED_DOMAIN",
+        text    => "Unexpected domain name",
+        context => "-all:quux.com",
     }
 
 =head2 E_DEFAULT
@@ -1112,7 +1133,7 @@ L<Parse::Yapp>
 
 =cut
 
-#line 187 "Parser.yp"
+#line 198 "Parser.yp"
 
 
 sub parse {
