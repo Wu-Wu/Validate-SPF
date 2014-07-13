@@ -5,6 +5,7 @@ package Validate::SPF;
 use strict;
 use warnings;
 use Exporter 'import';
+use Validate::SPF::Parser;
 
 # VERSION
 # AUTHORITY
@@ -48,86 +49,15 @@ sub validate {
         return wantarray ? ( 0, 'no SPF string' ) : 0;
     }
 
-    my @elements = split /\s+/ => $text;
+    my $parser = Validate::SPF::Parser->new;
 
-    unless ( @elements ) {
-        return wantarray ? ( 0, 'empty SPF string' ) : 0;
-    }
+    my $parsed = $parser->parse( $text );
 
-    my $tokens = [];
-    $TOKENS = $tokens;
-
-    for my $el ( @elements ) {
-        my ( $token, $qualifier, $mechanism, $modifier, $extra );
-
-        if ( $el =~ /v=spf1/ ) {
-            $token = {
-                type        => 'VERSION',
-                version     => $el,
-                valid       => 1,
-            };
-        }
-        elsif ( $el =~ /^([\Q+-~?\E]*)(all|ip4|ip6|a|mx|ptr|exists|include)(.*)/i ) {
-            ( $qualifier, $mechanism, $extra ) = ( ( $1 || '+' ), $2, ( $3 || undef ) );
-
-            $extra =~ s/^\://   if $extra;
-
-            $mechanism = lc $mechanism;
-
-            $token = {
-                type        => 'MECHANISM',
-                qualifier   => $qualifier,
-                mechanism   => $mechanism,
-                extra       => $extra,
-                valid       => (
-                    $qualifier && $mechanism
-                        ? ! $extra
-                            ? 1 : check_extra( $mechanism, $extra )
-                        : 0
-                ),
-            };
-        }
-        elsif ( $el =~ /^(redirect|exp)\=(.+)/i ) {
-            ( $modifier, $extra ) = ( $1, ( $2 || undef ) );
-
-            $modifier = lc $modifier;
-
-            $token = {
-                type        => 'MODIFIER',
-                modifier    => $modifier,
-                extra       => $extra,
-                valid       => (
-                    $modifier && $extra
-                        ? check_extra( $modifier, $extra )
-                        : 0
-                ),
-            };
-        }
-        else {
-            $token = {
-                type        => 'UNKNOWN',
-                valid       => 0,
-            };
-        }
-
-        $token->{raw} = $el;
-
-        push @$tokens, $token;
-    }
-
-    $TOKENS = $tokens;
-
-    my @invalid;
-
-    unless ( $tokens->[0]->{type} eq 'VERSION' ) {
-        push @invalid, { raw => 'SPF should start with version token: v=spf1' };
-    }
-    else {
-        @invalid = grep { ! $_->{valid} } @$tokens;
-    }
-
-    my $is_valid    = @invalid == 0 ? 1 : 0;
-    my $error       = $is_valid ? undef : $invalid[0]->{raw};
+    my $is_valid = $parsed ? 1 : 0;
+    my $error = $is_valid
+                    ? undef
+                    : $parser->error->{text} . ": '" . $parser->error->{context} . "'"
+                    ;
 
     return wantarray ? ( $is_valid, $error ) : $is_valid;
 }
