@@ -5,8 +5,11 @@ Revision history for Perl extension Validate::SPF.
     [ FEATURES ]
     - replace spf regex matching with LALR parsing
 
+    [ TESTS ]
+    - added tests for mechanisms
+
     [ DOCUMENTATION ]
-    - basic documentation for _validate_* funtions family added.
+    - basic documentation added
 
 0.001   Sat May 17 16:54:03 2014 +0000
 
