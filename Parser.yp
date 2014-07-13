@@ -13,7 +13,9 @@ my %errors = (
     E_SYNTAX                => "Syntax error near token '%s'",
     E_INVALID_VERSION       => "Invalid SPF version",
     E_IPADDR_EXPECTED       => "Expected ip or network address",
-    E_DOMAIN_EXPECTED       => "Expected domain name"
+    E_DOMAIN_EXPECTED       => "Expected domain name",
+    E_UNEXPECTED_BITMASK    => "Unexpected bitmask",
+    E_UNEXPECTED_IPADDR     => "Unexpected ip address",
 );
 
 %}
@@ -96,15 +98,25 @@ with_domain
 with_bitmask
     : MECHANISM '/' BITMASK
         {
-            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] . '/' . $_[3] )
+            my $ctx = $_[1] . '/' . $_[3];
+
+            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $ctx )
                 if $_[1] =~ /ip[46]/i;
+
+            $_[0]->raise_error( 'E_UNEXPECTED_BITMASK', $ctx )
+                if $_[1] =~ /ptr/i;
 
             $_[0]->_mech_domain_bitmask( '+', $_[1], '@', $_[3] );
         }
     | QUALIFIER MECHANISM '/' BITMASK
         {
-            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] . $_[2] . '/' . $_[4] )
+            my $ctx = $_[1] . $_[2] . '/' . $_[4];
+
+            $_[0]->raise_error( 'E_IPADDR_EXPECTED', $ctx )
                 if $_[2] =~ /ip[46]/i;
+
+            $_[0]->raise_error( 'E_UNEXPECTED_BITMASK', $ctx )
+                if $_[2] =~ /ptr/i;
 
             $_[0]->_mech_domain_bitmask( $_[1], $_[2], '@', $_[4] );
         }
@@ -114,10 +126,20 @@ with_bitmask
 with_domain_bitmask
     : MECHANISM ':' DOMAIN '/' BITMASK
         {
+            my $ctx = $_[1] . ':' . $_[3] . '/' . $_[5];
+
+            $_[0]->raise_error( 'E_UNEXPECTED_BITMASK', $ctx )
+                if $_[1] =~ /ptr/i;
+
             $_[0]->_mech_domain_bitmask( '+', $_[1], $_[3], $_[5] );
         }
     | QUALIFIER MECHANISM ':' DOMAIN '/' BITMASK
         {
+            my $ctx = $_[1] . $_[2] . ':' . $_[4] . '/' . $_[6];
+
+            $_[0]->raise_error( 'E_UNEXPECTED_BITMASK', $ctx )
+                if $_[2] =~ /ptr/i;
+
             $_[0]->_mech_domain_bitmask( $_[1], $_[2], $_[4], $_[6] );
         }
     ;
@@ -126,18 +148,38 @@ with_domain_bitmask
 with_ipaddress
     : MECHANISM ':' IPADDRESS
         {
+            my $ctx = $_[1] . ':' . $_[3];
+
+            $_[0]->raise_error( 'E_UNEXPECTED_IPADDR', $ctx )
+                if $_[1] =~ /ptr/i;
+
             $_[0]->_mech_ipaddr_bitmask( '+', $_[1], $_[3], undef );
         }
     | QUALIFIER MECHANISM ':' IPADDRESS
         {
+            my $ctx = $_[1] . $_[2] . ':' . $_[4];
+
+            $_[0]->raise_error( 'E_UNEXPECTED_IPADDR', $ctx )
+                if $_[2] =~ /ptr/i;
+
             $_[0]->_mech_ipaddr_bitmask( $_[1], $_[2], $_[4], undef );
         }
     | MECHANISM ':' IPADDRESS '/' BITMASK
         {
+            my $ctx = $_[1] . ':' . $_[3] . '/' . $_[5];
+
+            $_[0]->raise_error( 'E_UNEXPECTED_IPADDR', $ctx )
+                if $_[1] =~ /ptr/i;
+
             $_[0]->_mech_ipaddr_bitmask( '+', $_[1], $_[3], $_[5] );
         }
     | QUALIFIER MECHANISM ':' IPADDRESS '/' BITMASK
         {
+            my $ctx = $_[1] . $_[2] . ':' . $_[4] . '/' . $_[6];
+
+            $_[0]->raise_error( 'E_UNEXPECTED_IPADDR', $ctx )
+                if $_[2] =~ /ptr/i;
+
             $_[0]->_mech_ipaddr_bitmask( $_[1], $_[2], $_[4], $_[6] );
         }
     ;

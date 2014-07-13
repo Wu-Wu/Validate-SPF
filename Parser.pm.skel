@@ -161,6 +161,26 @@ Returned in cases of C<exists> or C<include> token has been used without domain 
         context => "exists",
     }
 
+=head2 E_UNEXPECTED_BITMASK
+
+Returned in cases of C<ptr> token has been used with bitmask.
+
+    {
+        code    => "E_UNEXPECTED_BITMASK",
+        text    => "Unexpected bitmask",
+        context => "?ptr:foo.net/18",
+    }
+
+=head2 E_UNEXPECTED_IPADDR
+
+Returned in cases of C<ptr> token has been used with ip or network address.
+
+    {
+        code    => "E_UNEXPECTED_IPADDR",
+        text    => "Unexpected ip address",
+        context => "-ptr:127.0.0.1",
+    }
+
 =head2 E_DEFAULT
 
 Default (last resort) error.

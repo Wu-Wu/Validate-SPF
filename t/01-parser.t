@@ -173,6 +173,62 @@ describe $module => sub {
             };
         }
     };
+
+    describe "[ptr]" => sub {
+        my @ptrs_ok = (
+            'ptr' =>
+                { qualifier => '+', domain => '@' },
+            '?ptr' =>
+                { qualifier => '?', domain => '@' },
+            '-ptr' =>
+                { qualifier => '-', domain => '@' },
+            '~ptr' =>
+                { qualifier => '~', domain => '@' },
+            'ptr:foo.example.net' =>
+                { qualifier => '+', domain => 'foo.example.net' },
+            '?ptr:bar.example.com' =>
+                { qualifier => '?', domain => 'bar.example.com' },
+        );
+
+        my @ptrs_not_ok = (
+            'ptr/26' =>
+                { code => 'E_UNEXPECTED_BITMASK', context => 'ptr/26' },
+            '+ptr/32' =>
+                { code => 'E_UNEXPECTED_BITMASK', context => '+ptr/32' },
+            '?ptr:foo.net/18' =>
+                { code => 'E_UNEXPECTED_BITMASK', context => '?ptr:foo.net/18' },
+            'ptr:quux.net/32' =>
+                { code => 'E_UNEXPECTED_BITMASK', context => 'ptr:quux.net/32' },
+            '-ptr:127.0.0.1' =>
+                { code => 'E_UNEXPECTED_IPADDR', context => '-ptr:127.0.0.1' },
+            '~ptr:fe80::1/128' =>
+                { code => 'E_UNEXPECTED_IPADDR', context => '~ptr:fe80::1/128' },
+            'ptr:fe80::2/96' =>
+                { code => 'E_UNEXPECTED_IPADDR', context => 'ptr:fe80::2/96' },
+            '+ptr=www.example.com' =>
+                { code => 'E_SYNTAX', context => '+ptr<*>=www.example.com' },
+        );
+
+        while ( my ( $case, $result ) = splice @ptrs_ok, 0, 2 ) {
+            it "should return result for '$case'" => sub {
+                my $got_result = $stash{parser}->parse( $case );
+
+                diag( explain( $stash{parser}->error ) )    unless $got_result;
+                is_deeply( $got_result, [ { %$result, type => 'mech', mechanism => 'ptr' } ] );
+            };
+        }
+
+        while ( my ( $case, $err ) = splice @ptrs_not_ok, 0, 2 ) {
+            it "should return error $err->{code} for '$case'" => sub {
+                $stash{parser}->parse( $case );
+
+                cmp_deeply(
+                    $stash{parser}->error,
+                    { %$err, text => ignore() }
+                );
+            };
+        }
+    };
 };
 
 runtests unless caller;
