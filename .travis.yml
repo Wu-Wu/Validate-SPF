@@ -7,11 +7,9 @@ perl:
     - "5.14"
     - "5.12"
     - "5.10"
-    # - "5.8"
 
 before_install:
     - unset PERL_CPANM_OPT
-    # - "cpanm --mirror http://cpan.stratopan.com -q -n Dist::Zilla"
     - "cpanm --mirror http://cpan.stratopan.com -q -n Dist::Zilla::PluginBundle::Author::CHIM"
     - "cpanm --mirror http://cpan.stratopan.com -q -n Test::Pod::Coverage"
 
