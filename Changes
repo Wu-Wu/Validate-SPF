@@ -2,6 +2,8 @@ Revision history for Perl extension Validate::SPF.
 
 {{$NEXT}}
 
+0.003   Wed Jul 16 05:15:46 2014 +0000
+
     [ FIXES ]
     - set minimum perl version to 5.10.1
     - set required Regexp::Common version
