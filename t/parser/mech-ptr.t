@@ -4,8 +4,8 @@ use t::lib::Parser;
 
 my $mech = 'ptr';
 
-my @positive = t::lib::Parser->positive_for( $mech );
-my @negative = t::lib::Parser->negative_for( $mech );
+my @positive = t::lib::Parser->positive_for( $mech, { type => 'mech', mechanism => $mech } );
+my @negative = t::lib::Parser->negative_for( $mech, { text => ignore() } );
 
 describe "Validate::SPF::Parser [$mech]" => sub {
     my ( $parser );
@@ -18,16 +18,7 @@ describe "Validate::SPF::Parser [$mech]" => sub {
         describe "positive for '$case'" => sub {
 
             it "should return correct result" => sub {
-                cmp_deeply(
-                    $parser->parse( $case ),
-                    [
-                        {
-                            %{ $result },
-                            type => 'mech',
-                            mechanism => $mech
-                        }
-                    ]
-                );
+                cmp_deeply( $parser->parse( $case ), [ $result ] );
             };
         };
     }
@@ -40,10 +31,7 @@ describe "Validate::SPF::Parser [$mech]" => sub {
             };
 
             it "should return correct error" => sub {
-                cmp_deeply(
-                    $parser->error,
-                    { %{ $result }, text => ignore() }
-                );
+                cmp_deeply( $parser->error, $result );
             };
         };
     }
