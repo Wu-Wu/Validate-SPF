@@ -2,10 +2,10 @@ use Test::Spec;
 use Validate::SPF::Parser;
 
 describe "Validate::SPF::Parser [version]" => sub {
-    share my %vars;
+    my ( $parser );
 
     before all => sub {
-        $vars{parser} = Validate::SPF::Parser->new;
+        $parser = Validate::SPF::Parser->new;
     };
 
     my @positive = (
@@ -26,7 +26,7 @@ describe "Validate::SPF::Parser [version]" => sub {
         describe "positive for '$case'" => sub {
             it "should return correct result" => sub {
                 cmp_deeply(
-                    $vars{parser}->parse( $case ),
+                    $parser->parse( $case ),
                     [
                         {
                             %$result,
@@ -41,12 +41,12 @@ describe "Validate::SPF::Parser [version]" => sub {
     while ( my ( $case, $result ) = splice @negative, 0, 2 ) {
         describe "negative for '$case'" => sub {
             before sub {
-                $vars{parser}->parse( $case );
+                $parser->parse( $case );
             };
 
             it "should return correct error" => sub {
                 cmp_deeply(
-                    $vars{parser}->error,
+                    $parser->error,
                     { %$result, text => ignore() }
                 );
             };

@@ -4,11 +4,10 @@ use Validate::SPF::Parser;
 my $mech = 'include';
 
 describe "Validate::SPF::Parser [$mech]" => sub {
-    share my %vars;
+    my ( $parser );
 
     before all => sub {
-        $vars{parser} = Validate::SPF::Parser->new;
-        $vars{mech} = $mech;
+        $parser = Validate::SPF::Parser->new;
     };
 
     my @positive = (
@@ -48,7 +47,7 @@ describe "Validate::SPF::Parser [$mech]" => sub {
 
             it "should return correct result" => sub {
                 cmp_deeply(
-                    $vars{parser}->parse( $case ),
+                    $parser->parse( $case ),
                     [
                         {
                             %{ $result },
@@ -65,12 +64,12 @@ describe "Validate::SPF::Parser [$mech]" => sub {
         describe "negative for '$case'" => sub {
 
             before sub {
-                $vars{parser}->parse( $case );
+                $parser->parse( $case );
             };
 
             it "should return correct error" => sub {
                 cmp_deeply(
-                    $vars{parser}->error,
+                    $parser->error,
                     { %{ $result }, text => ignore() }
                 );
             };
