@@ -1,7 +1,11 @@
 use Test::Spec;
 use Validate::SPF::Parser;
+use t::lib::Parser;
 
 my $mech = 'a';
+
+my @positive = t::lib::Parser->positive_for( $mech );
+my @negative = t::lib::Parser->negative_for( $mech );
 
 describe "Validate::SPF::Parser [$mech]" => sub {
     my ( $parser );
@@ -9,44 +13,6 @@ describe "Validate::SPF::Parser [$mech]" => sub {
     before all => sub {
         $parser = Validate::SPF::Parser->new;
     };
-
-    my @positive = (
-        'a' =>
-            { qualifier => '+', domain => '@' },
-        '?a' =>
-            { qualifier => '?', domain => '@' },
-        '-a' =>
-            { qualifier => '-', domain => '@' },
-        '~a' =>
-            { qualifier => '~', domain => '@' },
-        '+a' =>
-            { qualifier => '+', domain => '@' },
-        '-a/25' =>
-            { qualifier => '-', domain => '@', bitmask => '25' },
-        'a:mail.example.com' =>
-            { qualifier => '+', domain => 'mail.example.com' },
-        '-a:www.example.com' =>
-            { qualifier => '-', domain => 'www.example.com' },
-        '~a:example.net' =>
-            { qualifier => '~', domain => 'example.net' },
-        'a:foo.com/26' =>
-            { qualifier => '+', domain => 'foo.com', bitmask => '26' },
-        '?a:bar.com/8' =>
-            { qualifier => '?', domain => 'bar.com', bitmask => '8' },
-    );
-
-    my @negative = (
-        'a:10.17.1.0' =>
-            { code => 'E_UNEXPECTED_IPADDR', context => 'a:10.17.1.0' },
-        '?a:172.16.23.0/26' =>
-            { code => 'E_UNEXPECTED_IPADDR', context => '?a:172.16.23.0/26' },
-        '-a:2001::abe0' =>
-            { code => 'E_UNEXPECTED_IPADDR', context => '-a:2001::abe0' },
-        '~a:30a9:a37::ff0f/96' =>
-            { code => 'E_UNEXPECTED_IPADDR', context => '~a:30a9:a37::ff0f/96' },
-        '%a' =>
-            { code => 'E_SYNTAX', context => '<*>%a' },
-    );
 
     while ( my ( $case, $result ) = splice @positive, 0, 2 ) {
         describe "positive for '$case'" => sub {

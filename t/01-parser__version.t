@@ -1,5 +1,9 @@
 use Test::Spec;
 use Validate::SPF::Parser;
+use t::lib::Parser;
+
+my @positive = t::lib::Parser->positive_for( 'version' );
+my @negative = t::lib::Parser->negative_for( 'version' );
 
 describe "Validate::SPF::Parser [version]" => sub {
     my ( $parser );
@@ -7,20 +11,6 @@ describe "Validate::SPF::Parser [version]" => sub {
     before all => sub {
         $parser = Validate::SPF::Parser->new;
     };
-
-    my @positive = (
-        'v=spf1' =>
-            { version => 'v=spf1' },
-    );
-
-    my @negative = (
-        'v=spf2' =>
-            { code => 'E_INVALID_VERSION', context => 'v=spf2' },
-        'v=SPF1' =>
-            { code => 'E_INVALID_VERSION', context => 'v=SPF1' },
-        'v=spf-foo' =>
-            { code => 'E_SYNTAX', context => '<*>v=spf-foo' },
-    );
 
     while ( my ( $case, $result ) = splice @positive, 0, 2 ) {
         describe "positive for '$case'" => sub {

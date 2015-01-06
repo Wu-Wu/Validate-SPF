@@ -1,7 +1,11 @@
 use Test::Spec;
 use Validate::SPF::Parser;
+use t::lib::Parser;
 
 my $mech = 'exists';
+
+my @positive = t::lib::Parser->positive_for( $mech );
+my @negative = t::lib::Parser->negative_for( $mech );
 
 describe "Validate::SPF::Parser [$mech]" => sub {
     my ( $parser );
@@ -9,38 +13,6 @@ describe "Validate::SPF::Parser [$mech]" => sub {
     before all => sub {
         $parser = Validate::SPF::Parser->new;
     };
-
-    my @positive = (
-        'exists:mail.example.com' =>
-            { qualifier => '+', domain => 'mail.example.com' },
-        '-exists:www.example.com' =>
-            { qualifier => '-', domain => 'www.example.com' },
-        '~exists:example.net' =>
-            { qualifier => '~', domain => 'example.net' },
-        '?exists:foo.com' =>
-            { qualifier => '?', domain => 'foo.com' },
-        '+exists:bar.net' =>
-            { qualifier => '+', domain => 'bar.net' },
-    );
-
-    my @negative = (
-        'exists:10.17.1.0' =>
-            { code => 'E_UNEXPECTED_IPADDR', context => 'exists:10.17.1.0' },
-        '?exists:172.16.23.0/26' =>
-            { code => 'E_UNEXPECTED_IPADDR', context => '?exists:172.16.23.0/26' },
-        '-exists:2001::abe0' =>
-            { code => 'E_UNEXPECTED_IPADDR', context => '-exists:2001::abe0' },
-        '~exists:30a9:a37::ff0f/96' =>
-            { code => 'E_UNEXPECTED_IPADDR', context => '~exists:30a9:a37::ff0f/96' },
-        '+exists:mail.example.com/23' =>
-            { code => 'E_UNEXPECTED_BITMASK', context => '+exists:mail.example.com/23' },
-        '~exists/18' =>
-            { code => 'E_UNEXPECTED_BITMASK', context => '~exists/18' },
-        '?exists' =>
-            { code => 'E_DOMAIN_EXPECTED', context => '?exists' },
-        '%exists' =>
-            { code => 'E_SYNTAX', context => '<*>%exists' },
-    );
 
     while ( my ( $case, $result ) = splice @positive, 0, 2 ) {
         describe "positive for '$case'" => sub {
