@@ -121,9 +121,19 @@ Additional checks for EXP modifier.
 
 # SEE ALSO
 
-[RFC 7208](http://tools.ietf.org/html/rfc7208)
+Please see those modules/websites for more information related to this module.
 
-Sender Policy Framework (SPF) for Authorizing Use of Domains in Email, Version 1.
+- [RFC 7208](http://tools.ietf.org/html/rfc7208)
+- [Sender Policy Framework (SPF) for Authorizing Use of Domains in Email, Version 1.](https://metacpan.org/pod/Sender&#x20;Policy&#x20;Framework&#x20;\(SPF\)&#x20;for&#x20;Authorizing&#x20;Use&#x20;of&#x20;Domains&#x20;in&#x20;Email,&#x20;Version&#x20;1.)
+
+# BUGS
+
+Please report any bugs or feature requests on the bugtracker website
+https://github.com/Wu-Wu/Validate-SPF/issues
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 # AUTHOR
 

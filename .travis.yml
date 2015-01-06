@@ -1,7 +1,7 @@
 language: perl
 
 perl:
-    - "5.19"
+    - "5.20"
     - "5.18"
     - "5.16"
     - "5.14"
@@ -17,7 +17,7 @@ install:
     - "dzil authordeps --missing | xargs cpanm --mirror http://cpan.stratopan.com -q -n && dzil listdeps | xargs cpanm --mirror http://cpan.stratopan.com -q -n"
 
 script:
-    - "dzil smoke --release --author"
+    - "dzil test --release"
 
 after_success:
     - "cpanm --mirror http://cpan.stratopan.com -q -n Dist::Zilla::App::Command::cover Devel::Cover::Report::Coveralls"
