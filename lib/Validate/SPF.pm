@@ -268,9 +268,7 @@ sub _validate_exp {
 
 =head1 SEE ALSO
 
-L<RFC 7208|http://tools.ietf.org/html/rfc7208>
-
-Sender Policy Framework (SPF) for Authorizing Use of Domains in Email, Version 1.
+L<RFC 7208: Sender Policy Framework (SPF) for Authorizing Use of Domains in Email, Version 1|http://tools.ietf.org/html/rfc7208>
 
 =cut
 
