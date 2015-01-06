@@ -1,8 +1,6 @@
 use Test::Spec;
 use Validate::SPF::Parser;
 
-spec_helper 'mechanism.pl';
-
 my $mech = 'ip6';
 
 describe "Validate::SPF::Parser [$mech]" => sub {
@@ -47,11 +45,18 @@ describe "Validate::SPF::Parser [$mech]" => sub {
     while ( my ( $case, $result ) = splice @positive, 0, 2 ) {
         describe "positive for '$case'" => sub {
 
-            before sub {
-                @vars{qw( case result )} = ( $case, $result );
+            it "should return correct result" => sub {
+                cmp_deeply(
+                    $vars{parser}->parse( $case ),
+                    [
+                        {
+                            %{ $result },
+                            type => 'mech',
+                            mechanism => $mech
+                        }
+                    ]
+                );
             };
-
-            it_should_behave_like "mechanism positive";
         };
     }
 
@@ -59,10 +64,15 @@ describe "Validate::SPF::Parser [$mech]" => sub {
         describe "negative for '$case'" => sub {
 
             before sub {
-                @vars{qw( case result )} = ( $case, $result );
+                $vars{parser}->parse( $case );
             };
 
-            it_should_behave_like "mechanism negative";
+            it "should return correct error" => sub {
+                cmp_deeply(
+                    $vars{parser}->error,
+                    { %{ $result }, text => ignore() }
+                );
+            };
         };
     }
 };
