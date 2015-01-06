@@ -10,15 +10,30 @@ perl:
 
 before_install:
     - unset PERL_CPANM_OPT
-    - "cpanm --mirror http://cpan.stratopan.com -q -n Dist::Zilla::PluginBundle::Author::CHIM"
-    - "cpanm --mirror http://cpan.stratopan.com -q -n Test::Pod::Coverage"
+    - "echo 'user CHIM' > ~/.pause"
+    - "git config user.email 'chim@cpan.org'"
+    - "git config user.name 'Anton Gerasimov'"
+    - "perlbrew --force install-cpanm"
+    - "cpanm --version"
+    - "cpanm -q -n version"
+    - "cpanm -q -n Pod::Readme"
+    - "cpanm -q -n Test::CPAN::Meta"
+    - "cpanm -q -n Test::Kwalitee"
+    - "cpanm -q -n Test::Pod::Coverage"
+    - "cpanm -q -n Test::Pod"
+    - "cpanm -q -n Test::EOL"
+    - "cpanm -q -n Test::NoTabs"
+    - "cpanm -q -n Pod::Coverage::TrustPod"
+    - "cpanm -q -n Dist::Zilla::PluginBundle::Author::CHIM"
+    - "cpanm -q -n Test::Pod::Coverage"
 
 install:
-    - "dzil authordeps --missing | xargs cpanm --mirror http://cpan.stratopan.com -q -n && dzil listdeps | xargs cpanm --mirror http://cpan.stratopan.com -q -n"
+    - "dzil authordeps --missing | xargs cpanm -q -n"
+    - "dzil listdeps | xargs cpanm -q -n"
 
 script:
     - "dzil test --release"
 
 after_success:
-    - "cpanm --mirror http://cpan.stratopan.com -q -n Dist::Zilla::App::Command::cover Devel::Cover::Report::Coveralls"
+    - "cpanm -q -n Dist::Zilla::App::Command::cover Devel::Cover::Report::Coveralls"
     - "dzil cover -report coveralls"
