@@ -884,7 +884,7 @@ sub
 
             # known literals
             $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[3] )
-                if $_[1] =~ /\A(redirect)\Z/i;
+                if $_[1] =~ /\A(redirect|exp)\Z/i;
 
             return;
         }
@@ -898,7 +898,7 @@ sub
 
             # known literals
             $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[3] . '/' . $_[5] )
-                if $_[1] =~ /\A(redirect)\Z/i;
+                if $_[1] =~ /\A(redirect|exp)\Z/i;
 
             return;
         }

@@ -19,6 +19,7 @@ my %prefix = (
     exists      => 'mech-',
     unknown     => 'mod-',
     redirect    => 'mod-',
+    exp         => 'mod-',
 );
 
 my %_cache;
