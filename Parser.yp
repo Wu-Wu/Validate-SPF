@@ -101,11 +101,21 @@ modifier
     | LITERAL '=' IPADDRESS
         {
             # print "got (LITERAL_IPADDRESS): $_[1] = $_[3]\n";
+
+            # known literals
+            $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[3] )
+                if $_[1] =~ /\A(redirect)\Z/i;
+
             return;
         }
     | LITERAL '=' IPADDRESS '/' BITMASK
         {
             # print "got (LITERAL_IPADDRESS_BITMASK): $_[1] = $_[3] / $_[5]\n";
+
+            # known literals
+            $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[3] . '/' . $_[5] )
+                if $_[1] =~ /\A(redirect)\Z/i;
+
             return;
         }
     ;

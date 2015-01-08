@@ -17,3 +17,9 @@ negative:
     'redirect=тест.com':
         code: E_SYNTAX
         context: 'redirect=<*>тест.com'
+    'redirect=127.0.0.1':
+        code: E_DOMAIN_EXPECTED
+        context: '127.0.0.1'
+    'redirect=127.0.0.1/8':
+        code: E_DOMAIN_EXPECTED
+        context: '127.0.0.1/8'

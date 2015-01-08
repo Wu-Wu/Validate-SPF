@@ -881,22 +881,32 @@ sub
 #line 102 "Parser.yp"
 {
             # print "got (LITERAL_IPADDRESS): $_[1] = $_[3]\n";
+
+            # known literals
+            $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[3] )
+                if $_[1] =~ /\A(redirect)\Z/i;
+
             return;
         }
     ],
     [#Rule 16
          'modifier', 5,
 sub
-#line 107 "Parser.yp"
+#line 112 "Parser.yp"
 {
             # print "got (LITERAL_IPADDRESS_BITMASK): $_[1] = $_[3] / $_[5]\n";
+
+            # known literals
+            $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[3] . '/' . $_[5] )
+                if $_[1] =~ /\A(redirect)\Z/i;
+
             return;
         }
     ],
     [#Rule 17
          'with_domain', 1,
 sub
-#line 116 "Parser.yp"
+#line 126 "Parser.yp"
 {
             $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] )
                 if $_[1] =~ /ip[46]/i;
@@ -909,7 +919,7 @@ sub
     [#Rule 18
          'with_domain', 2,
 sub
-#line 125 "Parser.yp"
+#line 135 "Parser.yp"
 {
             $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] . $_[2] )
                 if $_[2] =~ /ip[46]/i;
@@ -922,7 +932,7 @@ sub
     [#Rule 19
          'with_domain', 3,
 sub
-#line 134 "Parser.yp"
+#line 144 "Parser.yp"
 {
             my $ctx = $_[1] . ':' . $_[3];
 
@@ -935,7 +945,7 @@ sub
     [#Rule 20
          'with_domain', 4,
 sub
-#line 143 "Parser.yp"
+#line 153 "Parser.yp"
 {
             my $ctx = $_[1] . $_[2] . ':' . $_[4];
 
@@ -948,7 +958,7 @@ sub
     [#Rule 21
          'with_bitmask', 3,
 sub
-#line 156 "Parser.yp"
+#line 166 "Parser.yp"
 {
             my $ctx = $_[1] . '/' . $_[3];
 
@@ -964,7 +974,7 @@ sub
     [#Rule 22
          'with_bitmask', 4,
 sub
-#line 168 "Parser.yp"
+#line 178 "Parser.yp"
 {
             my $ctx = $_[1] . $_[2] . '/' . $_[4];
 
@@ -980,7 +990,7 @@ sub
     [#Rule 23
          'with_domain_bitmask', 5,
 sub
-#line 184 "Parser.yp"
+#line 194 "Parser.yp"
 {
             my $ctx = $_[1] . ':' . $_[3] . '/' . $_[5];
 
@@ -993,7 +1003,7 @@ sub
     [#Rule 24
          'with_domain_bitmask', 6,
 sub
-#line 193 "Parser.yp"
+#line 203 "Parser.yp"
 {
             my $ctx = $_[1] . $_[2] . ':' . $_[4] . '/' . $_[6];
 
@@ -1006,7 +1016,7 @@ sub
     [#Rule 25
          'with_ipaddress', 3,
 sub
-#line 206 "Parser.yp"
+#line 216 "Parser.yp"
 {
             my $ctx = $_[1] . ':' . $_[3];
 
@@ -1019,7 +1029,7 @@ sub
     [#Rule 26
          'with_ipaddress', 4,
 sub
-#line 215 "Parser.yp"
+#line 225 "Parser.yp"
 {
             my $ctx = $_[1] . $_[2] . ':' . $_[4];
 
@@ -1032,7 +1042,7 @@ sub
     [#Rule 27
          'with_ipaddress', 5,
 sub
-#line 224 "Parser.yp"
+#line 234 "Parser.yp"
 {
             my $ctx = $_[1] . ':' . $_[3] . '/' . $_[5];
 
@@ -1045,7 +1055,7 @@ sub
     [#Rule 28
          'with_ipaddress', 6,
 sub
-#line 233 "Parser.yp"
+#line 243 "Parser.yp"
 {
             my $ctx = $_[1] . $_[2] . ':' . $_[4] . '/' . $_[6];
 
@@ -1214,7 +1224,7 @@ L<Parse::Yapp>
 
 =cut
 
-#line 243 "Parser.yp"
+#line 253 "Parser.yp"
 
 
 sub parse {
