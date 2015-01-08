@@ -14,5 +14,5 @@ negative:
         code: E_INVALID_VERSION
         context: 'v=SPF1'
     'v=spf-foo':
-        code: E_SYNTAX
-        context: '<*>v=spf-foo'
+        code: E_INVALID_VERSION
+        context: 'v=spf-foo'

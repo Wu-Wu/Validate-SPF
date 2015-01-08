@@ -6,7 +6,7 @@ Validate::SPF - Validates SPF text string
 
 # VERSION
 
-version 0.004
+version 0.005
 
 # SYNOPSIS
 
