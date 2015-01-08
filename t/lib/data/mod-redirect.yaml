@@ -23,3 +23,9 @@ negative:
     'redirect=127.0.0.1/8':
         code: E_DOMAIN_EXPECTED
         context: '127.0.0.1/8'
+    'redirect=2a00:f940::37':
+        code: E_DOMAIN_EXPECTED
+        context: '2a00:f940::37'
+    'redirect=2a00:f940::38/96':
+        code: E_DOMAIN_EXPECTED
+        context: '2a00:f940::38/96'
