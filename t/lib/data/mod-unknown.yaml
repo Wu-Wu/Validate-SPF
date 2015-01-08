@@ -19,3 +19,7 @@ negative:
     'quux':
         code: E_SYNTAX
         context: '<*>quux'
+    # TODO:
+    # 'idn=тест.example.com':
+    #     code: E_SYNTAX
+    #     context: 'idn=<*>тест.example.com'

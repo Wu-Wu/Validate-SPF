@@ -507,6 +507,9 @@ sub _Parse {
 #
 
 use Regexp::Common qw( net );
+use utf8;
+
+binmode( STDOUT, ':utf8' );
 
 my $input;
 
@@ -584,7 +587,7 @@ sub new {
             ":" => 15,
             "/" => 16
         },
-        DEFAULT => -16
+        DEFAULT => -17
     },
     {#State 3
         DEFAULT => -11
@@ -603,7 +606,8 @@ sub new {
     {#State 7
         ACTIONS => {
             "=" => 18
-        }
+        },
+        DEFAULT => -12
     },
     {#State 8
         DEFAULT => -9
@@ -660,7 +664,7 @@ sub new {
             ":" => 24,
             "/" => 25
         },
-        DEFAULT => -17
+        DEFAULT => -18
     },
     {#State 18
         ACTIONS => {
@@ -679,16 +683,16 @@ sub new {
         ACTIONS => {
             "/" => 29
         },
-        DEFAULT => -18
+        DEFAULT => -19
     },
     {#State 22
         ACTIONS => {
             "/" => 30
         },
-        DEFAULT => -24
+        DEFAULT => -25
     },
     {#State 23
-        DEFAULT => -20
+        DEFAULT => -21
     },
     {#State 24
         ACTIONS => {
@@ -702,16 +706,16 @@ sub new {
         }
     },
     {#State 26
-        DEFAULT => -13
+        DEFAULT => -14
     },
     {#State 27
-        DEFAULT => -12
+        DEFAULT => -13
     },
     {#State 28
         ACTIONS => {
             "/" => 34
         },
-        DEFAULT => -14
+        DEFAULT => -15
     },
     {#State 29
         ACTIONS => {
@@ -727,16 +731,16 @@ sub new {
         ACTIONS => {
             "/" => 37
         },
-        DEFAULT => -19
+        DEFAULT => -20
     },
     {#State 32
         ACTIONS => {
             "/" => 38
         },
-        DEFAULT => -25
+        DEFAULT => -26
     },
     {#State 33
-        DEFAULT => -21
+        DEFAULT => -22
     },
     {#State 34
         ACTIONS => {
@@ -744,10 +748,10 @@ sub new {
         }
     },
     {#State 35
-        DEFAULT => -22
+        DEFAULT => -23
     },
     {#State 36
-        DEFAULT => -26
+        DEFAULT => -27
     },
     {#State 37
         ACTIONS => {
@@ -760,13 +764,13 @@ sub new {
         }
     },
     {#State 39
-        DEFAULT => -15
+        DEFAULT => -16
     },
     {#State 40
-        DEFAULT => -23
+        DEFAULT => -24
     },
     {#State 41
-        DEFAULT => -27
+        DEFAULT => -28
     }
 ],
             yyrules     => [
@@ -776,13 +780,13 @@ sub new {
     [#Rule 1
          'spf', 1,
 sub
-#line 28 "Parser.yp"
+#line 31 "Parser.yp"
 { $_[1] }
     ],
     [#Rule 2
          'version', 1,
 sub
-#line 33 "Parser.yp"
+#line 36 "Parser.yp"
 {
             $_[1] eq 'v=spf1' and
                 return $_[0]->_ver_generic( $_[1] );
@@ -793,13 +797,13 @@ sub
     [#Rule 3
          'chunks', 2,
 sub
-#line 43 "Parser.yp"
+#line 46 "Parser.yp"
 { push( @{$_[1]}, $_[2] ) if defined $_[2]; $_[1] }
     ],
     [#Rule 4
          'chunks', 1,
 sub
-#line 45 "Parser.yp"
+#line 48 "Parser.yp"
 { defined $_[1] ? [ $_[1] ] : [ ] }
     ],
     [#Rule 5
@@ -824,9 +828,26 @@ sub
          'mechanism', 1, undef
     ],
     [#Rule 12
+         'modifier', 1,
+sub
+#line 66 "Parser.yp"
+{
+            # print "got (LITERAL): $_[1]\n";
+
+            # for known literals - specific error
+            $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[1] )
+                if $_[1] =~ /\A(redirect|exp)\Z/i;
+
+            # for unknown literals - syntax error
+            $_[0]->YYError;
+
+            return;
+        }
+    ],
+    [#Rule 13
          'modifier', 3,
 sub
-#line 63 "Parser.yp"
+#line 79 "Parser.yp"
 {
             # print "got (LITERAL_DOMAIN): $_[1] = $_[3]\n";
 
@@ -835,10 +856,10 @@ sub
             return $_[0]->_mod_generic( $_[1], $_[3] );
         }
     ],
-    [#Rule 13
+    [#Rule 14
          'modifier', 3,
 sub
-#line 71 "Parser.yp"
+#line 87 "Parser.yp"
 {
             # print "got (LITERAL_LITERAL): $_[1] = $_[3]\n";
 
@@ -854,28 +875,28 @@ sub
             return;
         }
     ],
-    [#Rule 14
+    [#Rule 15
          'modifier', 3,
 sub
-#line 86 "Parser.yp"
+#line 102 "Parser.yp"
 {
             # print "got (LITERAL_IPADDRESS): $_[1] = $_[3]\n";
             return;
         }
     ],
-    [#Rule 15
+    [#Rule 16
          'modifier', 5,
 sub
-#line 91 "Parser.yp"
+#line 107 "Parser.yp"
 {
             # print "got (LITERAL_IPADDRESS_BITMASK): $_[1] = $_[3] / $_[5]\n";
             return;
         }
     ],
-    [#Rule 16
+    [#Rule 17
          'with_domain', 1,
 sub
-#line 100 "Parser.yp"
+#line 116 "Parser.yp"
 {
             $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] )
                 if $_[1] =~ /ip[46]/i;
@@ -885,10 +906,10 @@ sub
             $_[0]->_mech_domain( '+', $_[1], $_[1] =~ /all/i ? undef : '@' );
         }
     ],
-    [#Rule 17
+    [#Rule 18
          'with_domain', 2,
 sub
-#line 109 "Parser.yp"
+#line 125 "Parser.yp"
 {
             $_[0]->raise_error( 'E_IPADDR_EXPECTED', $_[1] . $_[2] )
                 if $_[2] =~ /ip[46]/i;
@@ -898,10 +919,10 @@ sub
             $_[0]->_mech_domain( $_[1], $_[2], $_[2] =~ /all/i ? undef : '@' );
         }
     ],
-    [#Rule 18
+    [#Rule 19
          'with_domain', 3,
 sub
-#line 118 "Parser.yp"
+#line 134 "Parser.yp"
 {
             my $ctx = $_[1] . ':' . $_[3];
 
@@ -911,10 +932,10 @@ sub
             $_[0]->_mech_domain( '+', $_[1], $_[3] );
         }
     ],
-    [#Rule 19
+    [#Rule 20
          'with_domain', 4,
 sub
-#line 127 "Parser.yp"
+#line 143 "Parser.yp"
 {
             my $ctx = $_[1] . $_[2] . ':' . $_[4];
 
@@ -924,10 +945,10 @@ sub
             $_[0]->_mech_domain( $_[1], $_[2], $_[4] );
         }
     ],
-    [#Rule 20
+    [#Rule 21
          'with_bitmask', 3,
 sub
-#line 140 "Parser.yp"
+#line 156 "Parser.yp"
 {
             my $ctx = $_[1] . '/' . $_[3];
 
@@ -940,10 +961,10 @@ sub
             $_[0]->_mech_domain_bitmask( '+', $_[1], '@', $_[3] );
         }
     ],
-    [#Rule 21
+    [#Rule 22
          'with_bitmask', 4,
 sub
-#line 152 "Parser.yp"
+#line 168 "Parser.yp"
 {
             my $ctx = $_[1] . $_[2] . '/' . $_[4];
 
@@ -956,10 +977,10 @@ sub
             $_[0]->_mech_domain_bitmask( $_[1], $_[2], '@', $_[4] );
         }
     ],
-    [#Rule 22
+    [#Rule 23
          'with_domain_bitmask', 5,
 sub
-#line 168 "Parser.yp"
+#line 184 "Parser.yp"
 {
             my $ctx = $_[1] . ':' . $_[3] . '/' . $_[5];
 
@@ -969,10 +990,10 @@ sub
             $_[0]->_mech_domain_bitmask( '+', $_[1], $_[3], $_[5] );
         }
     ],
-    [#Rule 23
+    [#Rule 24
          'with_domain_bitmask', 6,
 sub
-#line 177 "Parser.yp"
+#line 193 "Parser.yp"
 {
             my $ctx = $_[1] . $_[2] . ':' . $_[4] . '/' . $_[6];
 
@@ -982,10 +1003,10 @@ sub
             $_[0]->_mech_domain_bitmask( $_[1], $_[2], $_[4], $_[6] );
         }
     ],
-    [#Rule 24
+    [#Rule 25
          'with_ipaddress', 3,
 sub
-#line 190 "Parser.yp"
+#line 206 "Parser.yp"
 {
             my $ctx = $_[1] . ':' . $_[3];
 
@@ -995,10 +1016,10 @@ sub
             $_[0]->_mech_ipaddr_bitmask( '+', $_[1], $_[3], undef );
         }
     ],
-    [#Rule 25
+    [#Rule 26
          'with_ipaddress', 4,
 sub
-#line 199 "Parser.yp"
+#line 215 "Parser.yp"
 {
             my $ctx = $_[1] . $_[2] . ':' . $_[4];
 
@@ -1008,10 +1029,10 @@ sub
             $_[0]->_mech_ipaddr_bitmask( $_[1], $_[2], $_[4], undef );
         }
     ],
-    [#Rule 26
+    [#Rule 27
          'with_ipaddress', 5,
 sub
-#line 208 "Parser.yp"
+#line 224 "Parser.yp"
 {
             my $ctx = $_[1] . ':' . $_[3] . '/' . $_[5];
 
@@ -1021,10 +1042,10 @@ sub
             $_[0]->_mech_ipaddr_bitmask( '+', $_[1], $_[3], $_[5] );
         }
     ],
-    [#Rule 27
+    [#Rule 28
          'with_ipaddress', 6,
 sub
-#line 217 "Parser.yp"
+#line 233 "Parser.yp"
 {
             my $ctx = $_[1] . $_[2] . ':' . $_[4] . '/' . $_[6];
 
@@ -1193,7 +1214,7 @@ L<Parse::Yapp>
 
 =cut
 
-#line 227 "Parser.yp"
+#line 243 "Parser.yp"
 
 
 sub parse {
@@ -1266,10 +1287,6 @@ sub _lexer {
         # mechanisms
         s/^(all|ptr|a|mx|ip4|ip6|exists|include)\b//i
             and return ( 'MECHANISM', $1 );
-
-        # modifiers
-        #s/^(redirect|exp)\b//i
-        #    and return ( 'MODIFIER', $1 );
 
         s/^($RE{net}{IPv4}{dec}|$RE{net}{IPv6}{-sep=>':'})\b//i
             and return ( 'IPADDRESS', $1 );

@@ -5,6 +5,9 @@
 #
 
 use Regexp::Common qw( net );
+use utf8;
+
+binmode( STDOUT, ':utf8' );
 
 my $input;
 
@@ -59,7 +62,20 @@ mechanism
     ;
 
 modifier
-    : LITERAL '=' DOMAIN
+    : LITERAL
+        {
+            # print "got (LITERAL): $_[1]\n";
+
+            # for known literals - specific error
+            $_[0]->raise_error( 'E_DOMAIN_EXPECTED', $_[1] )
+                if $_[1] =~ /\A(redirect|exp)\Z/i;
+
+            # for unknown literals - syntax error
+            $_[0]->YYError;
+
+            return;
+        }
+    | LITERAL '=' DOMAIN
         {
             # print "got (LITERAL_DOMAIN): $_[1] = $_[3]\n";
 
@@ -296,10 +312,6 @@ sub _lexer {
         # mechanisms
         s/^(all|ptr|a|mx|ip4|ip6|exists|include)\b//i
             and return ( 'MECHANISM', $1 );
-
-        # modifiers
-        #s/^(redirect|exp)\b//i
-        #    and return ( 'MODIFIER', $1 );
 
         s/^($RE{net}{IPv4}{dec}|$RE{net}{IPv6}{-sep=>':'})\b//i
             and return ( 'IPADDRESS', $1 );
